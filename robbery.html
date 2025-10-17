@@ -3,24 +3,25 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SASP — Robbery Report (dynamic officers)</title>
+<title>SASP — Robbery Report</title>
 <style>
-  :root{--bg:#0f172a;--panel:#0b1220;--line:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
-  header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);background:#0b1423}
-  header img{width:36px;height:36px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:#0b1220}
-  main{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:420px 1fr;gap:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:#cbd5e1}
-  .section{padding:12px}
-  label{display:block;font-size:12px;color:#94a3b8;margin-bottom:6px}
-  select,input,textarea{width:100%;padding:8px 10px;border:1px solid #233044;background:#0b1525;color:var(--text);border-radius:10px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  textarea{height:330px;white-space:pre-wrap}
-  .btns{display:flex;gap:8px;justify-content:flex-end;padding:10px;border-top:1px solid var(--line);background:#0b1423}
-  button{background:var(--accent);color:#001726;border:1px solid #3fb7eb;border-radius:10px;padding:7px 10px;cursor:pointer}
-  small.hint{color:#7aa2c4;display:block;margin-top:6px}
+:root{--bg:#0f172a;--panel:#0b1220;--line:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);background:#0b1423}
+header img{width:36px;height:36px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:#0b1220}
+main{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:430px 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:#cbd5e1}
+.section{padding:12px}
+label{display:block;font-size:12px;color:#9fb1c7;margin-bottom:6px}
+select,input,textarea{width:100%;padding:8px 10px;border:1px solid #233044;background:#0b1525;color:var(--text);border-radius:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+textarea{height:360px;white-space:pre-wrap}
+.btns{display:flex;gap:8px;justify-content:flex-end;padding:10px;border-top:1px solid var(--line);background:#0b1423}
+button{background:var(--accent);color:#001726;border:1px solid #3fb7eb;border-radius:10px;padding:7px 10px;cursor:pointer}
+h4{margin:12px 0 6px;color:#cbd5e1}
 </style>
 </head>
 <body>
@@ -28,7 +29,7 @@
   <img src="./assets/sasp_badge.png" alt="SASP">
   <div>
     <div style="font-weight:600">SASP — Robbery Report</div>
-    <div style="color:#94a3b8;font-size:12px">Dropdowns now fill the narrative automatically.</div>
+    <div style="color:#94a3b8;font-size:12px">Live autofill narration. Officers come from assets/officers.json</div>
   </div>
 </header>
 
@@ -43,71 +44,41 @@
         <div>
           <label>Scene Command</label>
           <select id="sceneCmd"><option value="">— Select officer —</option></select>
-          <small class="hint">Appears under [SCENE ASSIGNMENT] → Scene Command</small>
         </div>
         <div>
           <label>Negotiator</label>
           <select id="negotiator"><option value="">— Select officer —</option></select>
-          <small class="hint">Appears under [SCENE ASSIGNMENT] → Negotiator</small>
         </div>
       </div>
 
       <div style="margin-top:8px">
         <label>Stayed Back For Hostage</label>
         <select id="hostageBack"><option value="">— Select officer —</option></select>
-        <small class="hint">Appears under [SCENE ASSIGNMENT] → Stayed Back For Hostage</small>
       </div>
 
-      <h4 style="margin:12px 0 6px;color:#cbd5e1">Pursuit Order</h4>
+      <h4>Pursuit Order</h4>
       <div class="grid2">
-        <div>
-          <label>Primary</label>
-          <select id="primary"><option value="">— Select officer —</option></select>
-        </div>
-        <div>
-          <label>Passenger</label>
-          <select id="primaryPass"><option value="">— Select officer —</option></select>
-        </div>
+        <div><label>Primary</label><select id="primary"><option value="">— Select officer —</option></select></div>
+        <div><label>Passenger</label><select id="primaryPass"><option value="">— Select officer —</option></select></div>
       </div>
       <div class="grid2" style="margin-top:6px">
-        <div>
-          <label>Secondary</label>
-          <select id="secondary"><option value="">— Select officer —</option></select>
-        </div>
-        <div>
-          <label>Passenger</label>
-          <select id="secondaryPass"><option value="">— Select officer —</option></select>
-        </div>
+        <div><label>Secondary</label><select id="secondary"><option value="">— Select officer —</option></select></div>
+        <div><label>Passenger</label><select id="secondaryPass"><option value="">— Select officer —</option></select></div>
       </div>
       <div class="grid2" style="margin-top:6px">
-        <div>
-          <label>Tertiary</label>
-          <select id="tertiary"><option value="">— Select officer —</option></select>
-        </div>
-        <div>
-          <label>Passenger</label>
-          <select id="tertiaryPass"><option value="">— Select officer —</option></select>
-        </div>
+        <div><label>Tertiary</label><select id="tertiary"><option value="">— Select officer —</option></select></div>
+        <div><label>Passenger</label><select id="tertiaryPass"><option value="">— Select officer —</option></select></div>
       </div>
       <div class="grid2" style="margin-top:6px">
-        <div>
-          <label>Parallel</label>
-          <select id="parallel"><option value="">— Select officer —</option></select>
-        </div>
-        <div>
-          <label>Passenger</label>
-          <select id="parallelPass"><option value="">— Select officer —</option></select>
-        </div>
+        <div><label>Parallel</label><select id="parallel"><option value="">— Select officer —</option></select></div>
+        <div><label>Passenger</label><select id="parallelPass"><option value="">— Select officer —</option></select></div>
       </div>
 
-      <h4 style="margin:12px 0 6px;color:#cbd5e1">Robbery</h4>
-      <div>
-        <label>Type</label>
-        <div style="display:flex;gap:10px;color:#cbd5e1">
-          <label><input type="radio" name="robType" value="Jewelry Store"> Jewelry Store</label>
-          <label><input type="radio" name="robType" value="Fleeca Bank"> Fleeca Bank</label>
-          <label><input type="radio" name="robType" value="24/7 Store"> 24/7 Store</label>
-        </div>
+      <h4>Robbery</h4>
+      <div style="display:flex;gap:10px;color:#cbd5e1">
+        <label><input type="radio" name="robType" value="Jewelry Store"> Jewelry Store</label>
+        <label><input type="radio" name="robType" value="Fleeca Bank"> Fleeca Bank</label>
+        <label><input type="radio" name="robType" value="24/7 Store"> 24/7 Store</label>
       </div>
       <select id="whichFleeca" style="margin-top:6px;display:none">
         <option value="">Which Fleeca…</option>
@@ -130,25 +101,23 @@
         <div><label>Hostages</label><select id="hostages"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
       </div>
 
-      <div style="margin-top:10px">
-        <label>Demands</label>
-        <label><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> free passage with no spikes on perimeter</label>
-        <label><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> free passage with no spikes on the whole chase</label>
-        <label><input type="checkbox" class="demand" value="no helicopter"> no helicopter</label>
-        <label><input type="checkbox" class="demand" value="no speed unit"> no speed unit</label>
-        <label><input type="checkbox" class="demand" value="no bike unit"> no bike unit</label>
-        <input id="demandOther" placeholder="Other (optional)" style="margin-top:6px"/>
-      </div>
+      <h4>Demands</h4>
+      <label><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> free passage with no spikes on perimeter</label>
+      <label><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> free passage with no spikes on the whole chase</label>
+      <label><input type="checkbox" class="demand" value="no helicopter"> no helicopter</label>
+      <label><input type="checkbox" class="demand" value="no speed unit"> no speed unit</label>
+      <label><input type="checkbox" class="demand" value="no bike unit"> no bike unit</label>
+      <input id="demandOther" placeholder="Other (optional)" style="margin-top:6px"/>
 
-      <h4 style="margin:12px 0 6px;color:#cbd5e1">Vehicle</h4>
-      <input id="vehDesc" placeholder="Description (e.g., Black Sultan RS)"/>
+      <h4>Vehicle</h4>
+      <input id="vehDesc" placeholder="Description"/>
       <div class="grid3" style="margin-top:6px">
         <input id="vehColor" placeholder="Color"/>
         <input id="vehPlate" placeholder="Plate"/>
         <input id="vehRegTo" placeholder="Registered To"/>
       </div>
 
-      <h4 style="margin:12px 0 6px;color:#cbd5e1">Ending</h4>
+      <h4>Ending</h4>
       <select id="ending">
         <option value="">— Select how it ended —</option>
         <option>Suspects declared Code Red</option>
@@ -162,7 +131,7 @@
   </section>
 
   <section class="card">
-    <h3>Narrative</h3>
+    <h3>Report</h3>
     <div class="section">
       <textarea id="out" spellcheck="false" placeholder="Report will generate here…"></textarea>
     </div>
@@ -174,39 +143,35 @@
 </main>
 
 <script>
-// Fetch officers from shared asset file
-let OFFICERS = [];
-function nameFmt(o){ return `${o.cs} — ${o.name}`; }
+let OFFICERS=[];
+const S=id=>document.getElementById(id);
+function nameFmt(o){return `${o.cs} — ${o.name}`;}
 
 function populateSel(sel){
-  sel.innerHTML = '<option value=\"\">— Select officer —</option>';
+  sel.innerHTML='<option value=\"\">— Select officer —</option>';
   OFFICERS.forEach(o=>{
     const opt=document.createElement('option');
     opt.value=nameFmt(o);
     opt.textContent=nameFmt(o);
     sel.appendChild(opt);
   });
+  sel.value=''; sel.selectedIndex=0;
 }
 
 function loadOfficers(){
-  fetch('./assets/officers.json')
-    .then(r=>r.json())
-    .then(list=>{ OFFICERS=list; init(); })
-    .catch(()=>{ console.warn('Could not load officers.json'); init(); }); // still init to avoid blank UI
+  fetch('./assets/officers.json',{cache:'no-store'})
+    .then(r=>r.json()).then(list=>{OFFICERS=list; init();})
+    .catch(()=>{console.warn('officers.json missing'); init();});
 }
 
-const S = id => document.getElementById(id);
-
-const RF = {}; // state
+const RF={};
 
 function bindSelect(id){
-  const el=S(id);
+  const el=S(id); populateSel(el);
   el.addEventListener('change',()=>{ RF[id]=el.value; build(); });
-  populateSel(el);
 }
 function bindInput(id){
-  const el=S(id);
-  el.addEventListener('input',()=>{ RF[id]=el.value; build(); });
+  const el=S(id); el.addEventListener('input',()=>{RF[id]=el.value; build();});
 }
 function bindRadio(){
   document.querySelectorAll('input[name=robType]').forEach(r=>{
@@ -218,90 +183,73 @@ function bindRadio(){
     });
   });
   ['whichFleeca','which247','robInside','robOutside','hostages','ending'].forEach(id=>{
-    S(id).addEventListener('change',()=>{ RF[id]=S(id).value; build();});
+    S(id).addEventListener('change',()=>{ RF[id]=S(id).value; build(); });
   });
-  S('endingCustom').addEventListener('input',()=>{ RF.endingCustom=S('endingCustom').value; build();});
-  S('demandOther').addEventListener('input',()=>{ RF.demandOther=S('demandOther').value; build();});
-  document.querySelectorAll('.demand').forEach(cb=>{
-    cb.addEventListener('change',()=>{ build();});
-  });
+  ['demandOther','endingCustom','vehDesc','vehColor','vehPlate','vehRegTo'].forEach(id=>bindInput(id));
+  document.querySelectorAll('.demand').forEach(cb=>cb.addEventListener('change',build));
 }
 
 function init(){
-  // main officer dropdowns
-  ['officerSelf','sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass']
-    .forEach(bindSelect);
-
-  // other inputs
-  ['vehDesc','vehColor','vehPlate','vehRegTo'].forEach(bindInput);
+  ['officerSelf','sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass'].forEach(bindSelect);
   bindRadio();
   build();
 }
 
 function build(){
-  const sel = id => RF[id]||'';
-  const robType = RF.robType||'';
-  const which = robType==='Fleeca Bank' ? (RF.whichFleeca||'**Enter bank name here**')
-              : robType==='24/7 Store' ? (RF.which247||'**Enter store name here**')
-              : '';
-  const demands = [...document.querySelectorAll('.demand:checked')].map(cb=>cb.value);
-  if(RF.demandOther) demands.push(RF.demandOther);
+  const g=k=>RF[k]||'';
+  const robType=g('robType');
+  const which = robType==='Fleeca Bank' ? (g('whichFleeca')||'**Enter bank name here**')
+              : robType==='24/7 Store' ? (g('which247')||'**Enter store name here**') : '';
 
-  const involved = [];
-  if(sel('primary')||sel('primaryPass'))  involved.push(`Primary: ${sel('primary')||'—'}${sel('primaryPass')?`  |  Passenger: ${sel('primaryPass')}`:''}`);
-  if(sel('secondary')||sel('secondaryPass'))involved.push(`Secondary: ${sel('secondary')||'—'}${sel('secondaryPass')?`  |  Passenger: ${sel('secondaryPass')}`:''}`);
-  if(sel('tertiary')||sel('tertiaryPass'))  involved.push(`Tertiary: ${sel('tertiary')||'—'}${sel('tertiaryPass')?`  |  Passenger: ${sel('tertiaryPass')}`:''}`);
-  if(sel('parallel')||sel('parallelPass'))  involved.push(`Parallel: ${sel('parallel')||'—'}${sel('parallelPass')?`  |  Passenger: ${sel('parallelPass')}`:''}`);
+  const demands=[...document.querySelectorAll('.demand:checked')].map(x=>x.value);
+  if(g('demandOther')) demands.push(g('demandOther'));
 
-  const endingLine = (sel('endingCustom')||sel('ending'));
+  const lines=[];
+  if(g('officerSelf')){ lines.push('[REPORTING OFFICER]:'); lines.push(g('officerSelf')); lines.push(''); }
 
-  const lines = [];
-  if(sel('officerSelf')){
-    lines.push('[REPORTING OFFICER]:');
-    lines.push(sel('officerSelf'));
-    lines.push('');
-  }
   lines.push('[SCENE ASSIGNMENT]:');
-  lines.push(`Scene Command: ${sel('sceneCmd')||'[Insert Officer]'}`);
-  lines.push(`Negotiator: ${sel('negotiator')||'[Insert Officer]'}`);
-  lines.push(`Stayed Back For Hostage: ${sel('hostageBack')||'[Insert Officer]'}`);
+  lines.push(`Scene Command: ${g('sceneCmd')||'[Insert Officer]'}`);
+  lines.push(`Negotiator: ${g('negotiator')||'[Insert Officer]'}`);
+  lines.push(`Stayed Back For Hostage: ${g('hostageBack')||'[Insert Officer]'}`);
   lines.push('');
 
-  if(involved.length){
+  const PO=[
+    ['Primary',g('primary'),g('primaryPass')],
+    ['Secondary',g('secondary'),g('secondaryPass')],
+    ['Tertiary',g('tertiary'),g('tertiaryPass')],
+    ['Parallel',g('parallel'),g('parallelPass')],
+  ];
+  if(PO.some(p=>p[1]||p[2])){
     lines.push('[INVOLVED IN PURSUIT]:');
-    involved.forEach(x=>lines.push(x));
+    PO.forEach(([l,u,p])=>{ if(u||p) lines.push(`${l}: ${u||'—'}${p?`  |  Passenger: ${p}`:''}`); });
     lines.push('');
   }
 
   if(robType){
     lines.push('[DETAILS | DEMANDS]:');
     lines.push(`Robbery Type: ${robType}${which?`  |  ${robType==='Fleeca Bank'?'Which Fleeca':'Which 24/7'}: ${which}`:''}`);
-    lines.push(`Robbers Inside: ${sel('robInside')||'—'}`);
-    lines.push(`Robbers Outside: ${sel('robOutside')||'—'}`);
-    lines.push(`Hostages: ${sel('hostages')||'—'}`);
-    if(demands.length){
-      lines.push('Demands:');
-      demands.forEach(d=>lines.push(`- ${d}`));
-    }
+    lines.push(`Robbers Inside: ${g('robInside')||'—'}`);
+    lines.push(`Robbers Outside: ${g('robOutside')||'—'}`);
+    lines.push(`Hostages: ${g('hostages')||'—'}`);
+    if(demands.length){ lines.push('Demands:'); demands.forEach(d=>lines.push(`- ${d}`)); }
     lines.push('');
   }
 
-  if(sel('vehDesc')||sel('vehColor')||sel('vehPlate')||sel('vehRegTo')||endingLine){
+  const ending = g('endingCustom')||g('ending');
+  if(g('vehDesc')||g('vehColor')||g('vehPlate')||g('vehRegTo')||ending){
     lines.push('[VEHICLE | CHASE]:');
-    if(sel('vehDesc'))  lines.push(`- Description: ${sel('vehDesc')}`);
-    if(sel('vehColor')) lines.push(`- Color: ${sel('vehColor')}`);
-    if(sel('vehPlate')) lines.push(`- Plate: ${sel('vehPlate')}`);
-    if(sel('vehRegTo'))lines.push(`- Registered To: ${sel('vehRegTo')}`);
-    if(endingLine) lines.push(`- Ending: ${endingLine}`);
+    if(g('vehDesc'))  lines.push(`- Description: ${g('vehDesc')}`);
+    if(g('vehColor')) lines.push(`- Color: ${g('vehColor')}`);
+    if(g('vehPlate')) lines.push(`- Plate: ${g('vehPlate')}`);
+    if(g('vehRegTo'))lines.push(`- Registered To: ${g('vehRegTo')}`);
+    if(ending) lines.push(`- Ending: ${ending}`);
     lines.push('');
   }
 
-  S('out').value = lines.join('\n');
+  S('out').value=lines.join('\n');
 }
 
-document.getElementById('btnCopy').addEventListener('click',()=>{
-  navigator.clipboard.writeText(S('out').value).catch(()=>{});
-});
+document.getElementById('btnCopy').addEventListener('click',()=>navigator.clipboard.writeText(S('out').value));
 document.getElementById('btnPrint').addEventListener('click',()=>window.print());
 
 loadOfficers();
