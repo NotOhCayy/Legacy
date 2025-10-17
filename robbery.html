@@ -1,2 +1,172 @@
-<!-- fixed version with unified callsign/name dropdown and correct officer order -->
-[HTML code content will be inserted here in full]
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SASP — Robbery Report</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#0b1220; --border:#1e293b; --muted:#94a3b8;
+  --text:#e2e8f0; --accent:#38bdf8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0b1220,#0a1020)}
+.header img{width:36px;height:36px;border-radius:6px;border:1px solid var(--border)}
+.header .title{font-weight:700}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text);cursor:pointer}
+.btn:hover{border-color:#2e415b}
+.btn-primary{background:var(--accent);color:#05121a;border-color:#2aa4db}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.input, select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text)}
+textarea{min-height:220px;white-space:pre-wrap}
+.small{font-size:12px;color:var(--muted)}
+.footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}
+hr{border:0;border-top:1px solid var(--border);margin:12px 0}
+.badge{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;background:#0c162a;color:var(--muted);font-size:11px}
+
+.layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
+@media (max-width:1000px){.layout{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header class="header">
+  <img src="./assets/sasp_badge.png" alt="SASP badge"><div class="title">SASP — Robbery Report</div>
+  <a class="btn" style="margin-left:auto" href="./index.html">Back to Dashboard</a>
+</header>
+<main class="container">
+  <div class="layout">
+    <aside class="card">
+      <div class="grid2">
+        <select id="robOfficerSel"><option value="">Select callsign — name…</option></select>
+        <input id="robOfficer" class="input" placeholder="Your Callsign & Name (editable)" />
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <select id="sceneCmd"><option value="">Scene command…</option></select>
+        <select id="negotiator"><option value="">Negotiator…</option></select>
+      </div>
+      <select id="hostageBack" style="margin-top:12px" class="input"><option value="">Who stayed back for hostage…</option></select>
+
+      <h3 style="margin:16px 0 8px">Pursuit Order</h3>
+      <div class="grid2"><select id="primary"><option value="">Primary…</option></select><select id="primaryPass"><option value="">Passenger…</option></select></div>
+      <div class="grid2" style="margin-top:8px"><select id="secondary"><option value="">Secondary…</option></select><select id="secondaryPass"><option value="">Passenger…</option></select></div>
+      <div class="grid2" style="margin-top:8px"><select id="tertiary"><option value="">Tertiary…</option></select><select id="tertiaryPass"><option value="">Passenger…</option></select></div>
+      <div class="grid2" style="margin-top:8px"><select id="parallel"><option value="">Parallel…</option></select><select id="parallelPass"><option value="">Passenger…</option></select></div>
+      <div class="grid2" style="margin-top:8px"><input id="bike" class="input" placeholder="Bike-Unit (Optional)" /><input id="air1" class="input" placeholder="Air-1 (Optional)" /></div>
+      <input id="air1Copilot" class="input" placeholder="Co-Pilot (Optional)" style="margin-top:8px" />
+
+      <h3 style="margin:16px 0 8px">Robbery</h3>
+      <div role="radiogroup" aria-label="Robbery Type" class="small" style="display:flex;gap:12px;align-items:center">
+        <label><input type="radio" name="robType" value="Jewelry Store"> Jewelry Store</label>
+        <label><input type="radio" name="robType" value="Fleeca Bank"> Fleeca Bank</label>
+        <label><input type="radio" name="robType" value="24/7 Store"> 24/7 Store</label>
+      </div>
+      <select id="whichFleeca" class="input" style="margin-top:8px;display:none">
+        <option value="">Which Fleeca…</option>
+        <option>Legion Square</option><option>Burton</option><option>Rockford Hills (Lifeinvader)</option><option>Alta</option><option>Great Ocean</option><option>Route 68</option>
+      </select>
+      <select id="which247" class="input" style="margin-top:8px;display:none">
+        <option value="">Which 24/7…</option>
+        <option>Strawberry 24/7</option><option>Davis LTD 24/7</option><option>Murrieta Heights Rob's Liquor</option><option>Little Seoul LTD 24/7</option><option>Vespucci Canals Rob's Liquor</option><option>Morningwood Rob's Liquor</option><option>Mirror Park LTD 24/7</option><option>Downtown Vinewood 24/7</option><option>Tataviam Mountains 24/7</option><option>Banham Canyon Rob's Liquor</option><option>Banham Canyon 24/7</option><option>Richman Glen LTD 24/7</option><option>Chumash 24/7</option><option>Harmony 24/7</option><option>Grand Senora 24/7</option><option>Grapeseed LTD 24/7</option><option>Mount Chilliad 24/7</option>
+      </select>
+
+      <div class="grid3" style="margin-top:8px">
+        <label>Inside <select id="robInside"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <label>Outside <select id="robOutside"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <label>Hostages <select id="hostages"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="small" style="margin-bottom:4px">Demands</div>
+        <label><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> free passage with no spikes on perimeter</label><br>
+        <label><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> free passage with no spikes on the whole chase</label><br>
+        <label><input type="checkbox" class="demand" value="no helicopter"> no helicopter</label><br>
+        <label><input type="checkbox" class="demand" value="no speed unit"> no speed unit</label><br>
+        <label><input type="checkbox" class="demand" value="no bike unit"> no bike unit</label><br>
+        <input id="demandOther" class="input" placeholder="Other (optional)" />
+      </div>
+
+      <h3 style="margin:16px 0 8px">Vehicle</h3>
+      <input id="vehDesc" class="input" placeholder="Description" />
+      <div class="grid3" style="margin-top:8px">
+        <input id="vehColor" class="input" placeholder="Color" />
+        <input id="vehPlate" class="input" placeholder="Plate" />
+        <input id="vehRegTo" class="input" placeholder="Registered To" />
+      </div>
+
+      <h3 style="margin:16px 0 8px">Outcome</h3>
+      <select id="ending" class="input"><option value="">How did the chase end?</option></select>
+      <label style="margin-top:6px;display:block"><input id="caughtOnly" type="checkbox" /> Check this once they have been caught only!</label>
+      <textarea id="endingCustom" class="input" placeholder="Write Custom Ending (optional)" style="margin-top:8px"></textarea>
+
+      <h3 style="margin:16px 0 8px">Medical & Processing</h3>
+      <label><input id="medNeeded" type="checkbox"/> Medical attention needed</label>
+      <div class="grid3" style="margin-top:6px">
+        <label>Suspects <select id="medSus"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+        <label>Police <select id="medCop"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
+        <label>Hospital <select id="hospital"><option>Saint Fiacre</option><option>Mount Zonah</option><option>Sandy Shores Medical</option><option>Paleto Hospital</option><option>Cayo Perico</option></select></label>
+      </div>
+      <label style="margin-top:6px;display:block"><input id="fleeHospital" type="checkbox"/> Attempted to flee at hospital</label>
+      <div class="grid2" style="margin-top:8px">
+        <select id="processedAt"><option>MRPD</option><option>Sandy Shores Sheriff's Office</option><option>Davis PD</option><option>Paleto Police Department</option><option>Highway Police Department</option></select>
+        <label style="display:flex;align-items:center;gap:6px"><input id="pleadNC" type="checkbox"/> Plead no contest (optional)</label>
+      </div>
+    </aside>
+    <section class="card">
+      <textarea id="robReport" class="input" placeholder="The report will appear here as you fill the form…"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button id="robShare" class="btn">Share prefilled link</button>
+        <button id="robCopy" class="btn">Copy</button>
+        <button id="robPrint" class="btn">Print</button>
+      </div>
+    </section>
+  </div>
+  <div class="footer">Created by Maya Serrano | SASP Command</div>
+</main>
+
+<script>
+const OFFICERS=[
+  {"cs":"X-100","name":"Curtis Roscoe"},{"cs":"X-101","name":"Alexander Murphy"},
+  {"cs":"A-110","name":"Maya Serrano"},{"cs":"A-111","name":"Max Callahan"},{"cs":"A-112","name":"Alexandr Nolan"},{"cs":"A-115","name":"Pepper Belle"},{"cs":"A-118","name":"Oscar Deacon"},
+  {"cs":"C-123","name":"Hayley Cassidy"},{"cs":"C-134","name":"Jason Brennon"},
+  {"cs":"LT-129","name":"Quintin Johnson"},{"cs":"LT-141","name":"Valentina Reyes"},{"cs":"LT-151","name":"Hamidi Aziz"},{"cs":"LT-153","name":"Joseph Dredd"},{"cs":"LT-162","name":"John Shepard"},{"cs":"LT-169","name":"Frank Hoight"},{"cs":"LT-180","name":"Nora Cipriano"},
+  {"cs":"S-201","name":"Alexander Cappella"},{"cs":"S-202","name":"Justin North"},{"cs":"S-203","name":"Max Harris"},{"cs":"S-204","name":"Faye Howell"},{"cs":"S-205","name":"Timothy Martinez Jr"},{"cs":"S-206","name":"Louie Herrett"},{"cs":"S-207","name":"Romeo Vanderford"},{"cs":"S-218","name":"Ben Asher"},{"cs":"S-220","name":"Wes North"},{"cs":"S-227","name":"Lando Doe"},{"cs":"S-229","name":"Neon Cash"},{"cs":"S-239","name":"Dawid Odison"},{"cs":"S-255","name":"Brian O’connor II"},
+  {"cs":"CO-301","name":"Saylor Ray"},{"cs":"CO-303","name":"Jason Wescott"},{"cs":"CO-305","name":"Julius Barry"},{"cs":"CO-309","name":"Eddie Irwin"},{"cs":"CO-310","name":"Belle French"},{"cs":"CO-311","name":"Jay Walken"},{"cs":"CO-312","name":"Timmy Hunter"},{"cs":"CO-313","name":"Doug Grayves"},{"cs":"CO-320","name":"Bo Stabler"},{"cs":"CO-321","name":"Travis Brewer"},{"cs":"CO-331","name":"Enzo Knight"},{"cs":"CO-333","name":"Del Powers"},{"cs":"CO-350","name":"Stevo Mayte"},{"cs":"CO-360","name":"Matthew Ramirez"},{"cs":"CO-369","name":"James Middleton"},{"cs":"CO-383","name":"Skeeter Woodhouse"},{"cs":"CO-395","name":"Ronny Roman"},
+  {"cs":"SO-401","name":"Finley Maximoff"},{"cs":"SO-402","name":"Jerry Ward"},{"cs":"SO-404","name":"Joseph Randy"},{"cs":"SO-405","name":"Sebastian Collinsworth"},{"cs":"SO-406","name":"Ricky Mathers"},{"cs":"SO-407","name":"Sonny Sullivan"},{"cs":"SO-408","name":"Albus Davies"},{"cs":"SO-410","name":"Clint Morris"},{"cs":"SO-411","name":"Scarlett Rain"},{"cs":"SO-412","name":"Steven Wet"},{"cs":"SO-413","name":"Ralph Garza"},{"cs":"SO-414","name":"Aezlyn Soria"},{"cs":"SO-416","name":"Austin Crockett"},{"cs":"SO-419","name":"Kaleb Axel"},{"cs":"SO-420","name":"Juniper Rowan"},{"cs":"SO-429","name":"Dale Shields"},{"cs":"SO-440","name":"Dempsey Watson"},{"cs":"SO-443","name":"Street Frost"},{"cs":"SO-444","name":"Adam Ahmed"},{"cs":"SO-450","name":"Ava Valentine"},{"cs":"SO-459","name":"Jimmy Hoxton"},{"cs":"SO-469","name":"Jimmy Boudreaux"},{"cs":"SO-485","name":"Ralph Lawrence"},{"cs":"SO-488","name":"Marc Chevy"},{"cs":"SO-497","name":"Michigan Silver"},{"cs":"SO-498","name":"Jeremie Rodriguez Valentine"},
+  {"cs":"O-501","name":"Casey Leclair"},{"cs":"O-505","name":"Justin Bleacher"},{"cs":"O-507","name":"Phil Eldwood"},{"cs":"O-509","name":"Jacob Page"},{"cs":"O-510","name":"Tommy Thibodeaux"},{"cs":"O-511","name":"Eevee Hunter"},{"cs":"O-520","name":"Lela Law"},{"cs":"O-521","name":"Aileen Callahan"},{"cs":"O-525","name":"Davie Smith"},{"cs":"O-530","name":"Aurora Bordeaux"},{"cs":"O-542","name":"Fredrick Oxmall"},{"cs":"O-545","name":"Michael Price"},{"cs":"O-550","name":"Lexie Rivers"},{"cs":"O-555","name":"Peter Dinklage"},{"cs":"O-559","name":"Misty Meanor"},
+  {"cs":"PO-601","name":"Tommy Redwood"},{"cs":"PO-612","name":"Anakin Skywalker"},{"cs":"PO-616","name":"Derrick Stones"},{"cs":"PO-617","name":"Peach Cobbler"},{"cs":"PO-627","name":"Lily Cappella-beltz"},{"cs":"PO-660","name":"Elliot Grayson"},{"cs":"PO-666","name":"Benson Drake"},{"cs":"PO-669","name":"Kendrick Carter"},{"cs":"PO-670","name":"Ryan Gonzalez"},{"cs":"PO-677","name":"Eric Gunter"},{"cs":"PO-687","name":"Lewis Gallagher"}
+];
+const NAME_OPT=(o)=>`${o.name} — ${o.cs}`;
+function populateCallsignSelect(sel){ if(!sel) return; sel.innerHTML='<option value="">Select callsign — name…</option>'; OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=o.cs; opt.textContent=`${o.cs} — ${o.name}`; sel.appendChild(opt);}); }
+function populateNameSelect(sel){ if(!sel) return; sel.innerHTML=`<option value="">— Select —</option>`; OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=NAME_OPT(o); opt.textContent=NAME_OPT(o); sel.appendChild(opt);}); }
+
+const RF=JSON.parse(localStorage.getItem('robbery_v2')||'{}');
+function persistRF(){ localStorage.setItem('robbery_v2',JSON.stringify(RF)); }
+function fillOfficerSelect(selId,inputId){ const sel=document.querySelector(selId); populateCallsignSelect(sel); if(RF.officerCS) sel.value=RF.officerCS; sel.onchange=()=>{ const o=OFFICERS.find(x=>x.cs===sel.value); if(!o) return; RF.officerCS=o.cs; RF.officer=`${o.cs} — ${o.name}`; document.querySelector(inputId).value=RF.officer; persistRF(); buildRF(); }; }
+function populatePursuitDropdowns(){ ['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass'].forEach(id=>populateNameSelect(document.getElementById(id))); ['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass'].forEach(id=>{ const el=document.getElementById(id); if(RF[id]) el.value=RF[id]; el.addEventListener('change',ev=>{ RF[id]=ev.target.value; persistRF(); buildRF();}); }); }
+function toggleWhich(){ const f=document.getElementById('whichFleeca'), s=document.getElementById('which247'); f.style.display=(RF.robType==='Fleeca Bank')?'block':'none'; s.style.display=(RF.robType==='24/7 Store')?'block':'none'; }
+function initRobType(){ if(RF.robType){ const r=Array.from(document.getElementsByName('robType')).find(x=>x.value===RF.robType); if(r) r.checked=true; } Array.from(document.getElementsByName('robType')).forEach(r=>r.addEventListener('change',()=>{ RF.robType=r.value; persistRF(); toggleWhich(); buildRF(); })); }
+function bindRF(){ function bindSel(id){ const el=document.querySelector(id); if(!el) return; if(RF[id.slice(1)]) el.value=RF[id.slice(1)]; el.addEventListener('change',ev=>{ RF[id.slice(1)]=ev.target.value; persistRF(); buildRF();}); }
+  function bindTxt(id){ const el=document.querySelector(id); if(!el) return; el.value=RF[id.slice(1)]||''; el.addEventListener('input',ev=>{ RF[id.slice(1)]=ev.target.value; persistRF(); buildRF();}); }
+  function bindChk(id){ const el=document.querySelector(id); if(!el) return; el.checked=!!RF[id.slice(1)]; el.addEventListener('change',()=>{ RF[id.slice(1)]=el.checked; persistRF(); buildRF();}); }
+  bindTxt('#robOfficer'); ['#robInside','#robOutside','#hostages','#processedAt','#hospital','#ending'].forEach(bindSel); ['#bike','#air1','#air1Copilot','#demandOther','#vehDesc','#vehColor','#vehPlate','#vehRegTo','#endingCustom'].forEach(bindTxt); ['#caughtOnly','#medNeeded','#fleeHospital','#pleadNC'].forEach(bindChk);
+  Array.from(document.querySelectorAll('.demand')).forEach(cb=>{ cb.checked=(RF.demands||[]).includes(cb.value); cb.addEventListener('change',()=>{ const set=new Set(RF.demands||[]); if(cb.checked) set.add(cb.value); else set.delete(cb.value); RF.demands=[...set]; persistRF(); buildRF();}); }); }
+const ENDINGS=[ 'Units lost eyes | Escaped','Suspects caught | General Ending','Surrendered | General Ending','Got out of vehicle | Ran on foot | Caught','Got out of vehicle | Ran on foot | Escaped','Vehicle disabled | Ran on foot | Caught','Vehicle disabled | Ran on foot | Escaped','Vehicle disabled | Vehicle swap | Caught','Vehicle disabled | Vehicle swap | Escaped','Vehicle disabled | Surrendered','Vehicle Tires Popped | Ran on foot | Caught','Vehicle Tires Popped | Ran on foot | Escaped','Vehicle Tires Popped | Surrendered','Vehicle boxed in | Ran on foot | Caught','Vehicle boxed in | Ran on foot | Escaped','Vehicle boxed in | Surrendered','Attempted Vehicle swap | Caught','Vehicle swap x1 | Caught','Vehicle swap x1 | Escaped','Vehicle swap x2 | Caught','Vehicle swap x2 | Escaped','Vehicle swap x3 | Caught','Vehicle swap x3 | Escaped','Bike swap | Caught','Bike swap | Escaped','Vehicle ran out of fuel | Ran on foot | Transfer vehicle | Caught','Vehicle ran out of fuel | Ran on foot | Transfer vehicle | Escaped','Vehicle ran out of fuel | Ran on foot | Caught','Vehicle ran out of fuel | Ran on foot | Escaped','Vehicle ran out of fuel | Surrendered','Vehicle turtled | Ran on foot | Transfer vehicle | Caught','Vehicle turtled | Ran on foot | Transfer vehicle | Escaped','Vehicle turtled | Ran on foot | Caught','Vehicle turtled | Ran on foot | Escaped','Vehicle turtled | Surrendered','Vehicle Stuck | Ran on foot | Caught','Vehicle Stuck | Ran on foot | Escaped','Vehicle Stuck | Surrendered','Vehicle was sent into water | Caught','Vehicle was sent into water | Escaped','Vehicle blew up','Vehicle took a jump | Escaped','Suspects opened fire from the vehicle | Caught','Suspects opened fire from the vehicle | Escaped','Turned into a shootout | All Caught','Turned into a shootout | All Escaped','Secondary Vehicle Blocked Units | Escaped','Vehicle 10-50 | Suspects went down','Bike disabled | Ran on foot | Caught','Bike disabled | Ran on foot | Escaped','Bike disabled | Surrendered','Fell off bike | Ran on foot | Caught','Fell off bike | Ran on foot | Escaped','Fell off bike | Vehicle Swap | Caught','Fell off bike | Vehicle Swap | Escaped','Fell off bike | Surrendered','Suspects declared Code Red' ];
+function buildRF(){ const lines=[]; if(RF.officer) lines.push(`Your Callsign & Name: ${RF.officer}`); if(RF.sceneCmd||RF.negotiator||RF.hostageBack){ lines.push(''); lines.push('Assignment:'); if(RF.sceneCmd) lines.push(`- Scene command: ${RF.sceneCmd}`); if(RF.negotiator) lines.push(`- Negotiator: ${RF.negotiator}`); if(RF.hostageBack) lines.push(`- Who stayed back for hostage: ${RF.hostageBack}`); }
+  const purs=[['Primary',RF.primary,RF.primaryPass],['Secondary',RF.secondary,RF.secondaryPass],['Tertiary',RF.tertiary,RF.tertiaryPass],['Parallel',RF.parallel,RF.parallelPass]]; const extras=[['Bike-Unit',RF.bike],['Air-1',RF.air1],['Co-Pilot',RF.air1Copilot]]; if(purs.some(x=>x[1]||x[2])||extras.some(x=>x[1])){ lines.push(''); lines.push('Pursuit Order:'); purs.forEach(([l,u,p])=>{ if(u||p) lines.push(`${l}: ${u||'—'}${p?`  |  Passenger: ${p}`:''}`);}); if(RF.bike) lines.push(`Bike-Unit (Optional): ${RF.bike}`); if(RF.air1) lines.push(`Air-1 (Optional): ${RF.air1}`); if(RF.air1Copilot) lines.push(`Co-Pilot (Optional): ${RF.air1Copilot}`); }
+  if(RF.robType){ lines.push(''); lines.push(`Robbery Type: ${RF.robType}`); if(RF.robType==='Fleeca Bank'){ if(RF.whichFleeca) lines.push(`Which Fleeca: ${RF.whichFleeca}`); else lines.push('Which Fleeca: **Enter bank name here**'); } if(RF.robType==='24/7 Store'){ if(RF.which247) lines.push(`Which 24/7: ${RF.which247}`); else lines.push('Which 24/7: **Enter store name here**'); } }
+  if(RF.robInside||RF.robOutside||RF.hostages){ lines.push(''); lines.push(`Numbers: Robbers on inside: ${RF.robInside||'—'} | Robbers on outside: ${RF.robOutside||'—'} | Hostages: ${RF.hostages||'—'}`); }
+  const demands=[...(RF.demands||[])]; if(RF.demandOther) demands.push(RF.demandOther); if(demands.length){ lines.push(''); lines.push('Demands:'); demands.forEach(d=>lines.push(`- ${d}`)); }
+  if(RF.vehDesc||RF.vehColor||RF.vehPlate||RF.vehRegTo){ lines.push(''); lines.push('Vehicle Information:'); if(RF.vehDesc) lines.push(`- Description: ${RF.vehDesc}`); if(RF.vehColor) lines.push(`- Color: ${RF.vehColor}`); if(RF.vehPlate) lines.push(`- Plate: ${RF.vehPlate}`); if(RF.vehRegTo) lines.push(`- Registered To: ${RF.vehRegTo}`); }
+  const endingLine=(RF.endingCustom&&RF.endingCustom.trim())?RF.endingCustom.trim():(RF.ending||''); if(endingLine||RF.caughtOnly){ lines.push(''); lines.push('How did the chase end?'); if(endingLine) lines.push(`- ${endingLine}`); if(RF.caughtOnly) lines.push('- Check this once they have been caught only!'); }
+  if(RF.medNeeded||RF.medSus||RF.medCop||RF.hospital||RF.fleeHospital){ lines.push(''); lines.push('Medical Attention... - Was it needed?'); if(RF.medNeeded) lines.push('- Yes'); if(RF.medSus) lines.push(`- Suspects: ${RF.medSus}`); if(RF.medCop) lines.push(`- Police: ${RF.medCop}`); if(RF.hospital) lines.push(`Which hospital? ${RF.hospital}`); if(RF.fleeHospital) lines.push('- Attempted to flee at hospital'); }
+  if(RF.processedAt||RF.pleadNC){ lines.push(''); lines.push('Processed at...'); if(RF.processedAt) lines.push(`- ${RF.processedAt}`); if(RF.pleadNC) lines.push('- Plead no contest'); }
+  document.getElementById('robReport').value=lines.join('\n');
+}
+function persist(){ localStorage.setItem('robbery_v2',JSON.stringify(RF)); }
+function init(){ populateCallsignSelect(document.getElementById('robOfficerSel')); fillOfficerSelect('#robOfficerSel','#robOfficer'); populatePursuitDropdowns(); const e=document.getElementById('ending'); ENDINGS.forEach(x=>{ const opt=document.createElement('option'); opt.textContent=x; e.appendChild(opt);}); if(RF.ending) e.value=RF.ending; e.onchange=()=>{ RF.ending=e.value; persistRF(); buildRF(); }; initRobType(); toggleWhich(); bindRF(); buildRF();
+  document.getElementById('robCopy').addEventListener('click',()=>navigator.clipboard.writeText(document.getElementById('robReport').value).catch(()=>{})); document.getElementById('robPrint').addEventListener('click',()=>window.print()); document.getElementById('robShare').addEventListener('click',()=>{ const parts=[]; const enc=v=>encodeURIComponent(v); if(RF.officerCS) parts.push(`officerCS=${enc(RF.officerCS)}`); else if(RF.officer) parts.push(`officer=${enc(RF.officer)}`); const map=['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass','bike','air1','air1Copilot','robType','whichFleeca','which247','robInside','robOutside','hostages','demandOther','vehDesc','vehColor','vehPlate','vehRegTo','ending','endingCustom','processedAt']; map.forEach(k=>{ if(RF[k]) parts.push(`${k}=${enc(RF[k])}`); }); if(RF.caughtOnly) parts.push('caughtOnly=1'); if(RF.medNeeded) parts.push('medNeeded=1'); if(RF.fleeHospital) parts.push('fleeHospital=1'); if(RF.pleadNC) parts.push('pleadNC=1'); if((RF.demands||[]).length) parts.push(`demands=${enc((RF.demands||[]).join('|'))}`); const url=`${location.origin}${location.pathname}?${parts.join('&')}#rob`; navigator.clipboard.writeText(url).then(()=>alert('Shareable link copied')).catch(()=>prompt('Copy link:',url)); }); }
+init();
+</script>
+</body></html>
