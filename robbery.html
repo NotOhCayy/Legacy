@@ -5,282 +5,292 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>SASP — Robbery Report</title>
 <style>
-:root{--bg:#0f172a;--panel:#0b1220;--line:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
+:root{--bg:#0f172a;--panel:#0b1220;--border:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Inter,Roboto,Arial,sans-serif}
-header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);background:#0b1423}
-header img{width:36px;height:36px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:#0b1220}
-main{max-width:1250px;margin:0 auto;padding:16px;display:grid;grid-template-columns:480px 1fr;gap:16px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:#cbd5e1}
-.section{padding:12px}
-label{display:block;font-size:12px;color:#9fb1c7;margin-bottom:6px}
-select,input,textarea{width:100%;padding:8px 10px;border:1px solid #233044;background:#0b1525;color:var(--text);border-radius:10px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-textarea{height:520px;white-space:pre-wrap}
-.btns{display:flex;gap:8px;justify-content:flex-end;padding:10px;border-top:1px solid var(--line);background:#0b1423}
-button{background:var(--accent);color:#001726;border:1px solid #3fb7eb;border-radius:10px;padding:7px 10px;cursor:pointer}
-h4{margin:12px 0 6px;color:#cbd5e1}
-/* checkbox rows */
-.ck{display:flex;align-items:center;gap:8px;margin:0 0 6px 0}
-.ck input{margin:0}
-.small{font-size:12px;color:var(--muted)}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.logo{width:28px;height:28px;border-radius:8px;background:#0b1220 url('assets/sasp_badge.png') center/cover no-repeat;border:1px solid var(--border)}
+h1{font-size:16px;margin:0}
+small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:460px 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.card h2{margin:0;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:#cbd5e1}
+.card .body{padding:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.full{grid-column:1/-1}
+select,input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--border);background:#0d1422;color:var(--text);border-radius:10px}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%),linear-gradient(to right,#0d1422,#0d1422);background-position:calc(100% - 18px) calc(1em + 2px),calc(100% - 13px) calc(1em + 2px),100% 0;background-size:5px 5px,5px 5px,2.5em 2.5em;background-repeat:no-repeat}
+textarea{width:100%;height:380px;padding:10px;border:1px solid var(--border);background:#0d1422;color:var(--text);border-radius:10px;white-space:pre}
+.group{margin:10px 0}
+.group legend{color:#cbd5e1;font-weight:600;margin-bottom:6px}
+/* checkbox alignment */
+.checklist{display:grid;grid-template-columns:1fr max-content;row-gap:8px;column-gap:12px;align-items:center}
+.check{display:flex;align-items:center;gap:8px}
+.check input{width:16px;height:16px;margin:0}
+.inline-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.btns{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.btn{background:var(--accent);color:#081826;border:1px solid #1c97ba;padding:8px 12px;border-radius:10px;cursor:pointer}
+.muted{color:var(--muted);font-size:12px}
+.badge{display:inline-block;border:1px solid var(--border);background:#0d1422;padding:2px 6px;border-radius:6px;font-size:11px;margin-left:6px}
 </style>
 </head>
 <body>
+<div class="wrap">
 <header>
-  <img src="./assets/sasp_badge.png" alt="SASP">
+  <div class="logo" aria-hidden="true"></div>
   <div>
-    <div style="font-weight:600">SASP — Robbery Report</div>
-    <div class="small">Live narrative generator. Officers come from <code>assets/officers.json</code>.</div>
+    <h1>SASP — Robbery Report</h1>
+    <small>Live narrative generator. Officers come from <code>assets/officers.json</code>.</small>
   </div>
 </header>
 
-<main>
+<div class="grid">
   <section class="card">
-    <h3>Inputs</h3>
-    <div class="section">
-      <label>Your Callsign &amp; Name</label>
-      <select id="officerSelf"><option value="">— Select officer —</option></select>
+    <h2>Inputs</h2>
+    <div class="body" id="inputs">
+      <div class="row">
+        <label class="full">Your Callsign &amp; Name
+          <select id="you"></select>
+        </label>
+      </div>
 
-      <div class="grid2" style="margin-top:8px">
-        <div>
-          <label>Scene Command</label>
-          <select id="sceneCmd"><option value="">— Select officer —</option></select>
+      <div class="row">
+        <label>Scene Command
+          <select id="scene"></select>
+        </label>
+        <label>Negotiator
+          <select id="nego"></select>
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="full">Stayed Back For Hostage
+          <select id="hostageBack"></select>
+        </label>
+      </div>
+
+      <h3 class="muted">Pursuit Order</h3>
+      <div class="row">
+        <label>Primary
+          <select id="p1"></select>
+        </label>
+        <label>Passenger
+          <select id="p1pass"></select>
+        </label>
+      </div>
+      <div class="row">
+        <label>Secondary
+          <select id="p2"></select>
+        </label>
+        <label>Passenger
+          <select id="p2pass"></select>
+        </label>
+      </div>
+      <div class="row">
+        <label>Tertiary
+          <select id="p3"></select>
+        </label>
+        <label>Passenger
+          <select id="p3pass"></select>
+        </label>
+      </div>
+      <div class="row">
+        <label>Parallel
+          <select id="par"></select>
+        </label>
+        <label>Passenger
+          <select id="parpass"></select>
+        </label>
+      </div>
+
+      <h3 class="muted">Robbery</h3>
+      <div class="row">
+        <label class="full">Type
+          <select id="rType">
+            <option value="Jewelry Store">Jewelry Store</option>
+            <option value="Fleeca Bank">Fleeca Bank</option>
+            <option value="24/7 Store">24/7 Store</option>
+          </select>
+        </label>
+        <label class="full">Location
+          <select id="rLoc"></select>
+        </label>
+      </div>
+
+      <div class="inline-nums">
+        <label>Inside
+          <select id="inside"></select>
+        </label>
+        <label>Outside
+          <select id="outside"></select>
+        </label>
+        <label>Hostages
+          <select id="hostages"></select>
+        </label>
+      </div>
+
+      <fieldset class="group">
+        <legend>Demands</legend>
+        <div class="checklist">
+          <label class="check"><input type="checkbox" class="dm" value="free passage with no spikes on perimeter"> <span>free passage with no spikes on perimeter</span></label><span></span>
+          <label class="check"><input type="checkbox" class="dm" value="free passage with no spikes on the whole chase"> <span>free passage with no spikes on the whole chase</span></label><span></span>
+          <label class="check"><input type="checkbox" class="dm" value="no helicopter"> <span>no helicopter</span></label><span></span>
+          <label class="check"><input type="checkbox" class="dm" value="no speed unit"> <span>no speed unit</span></label><span></span>
+          <label class="check"><input type="checkbox" class="dm" value="no bike unit"> <span>no bike unit</span></label><span></span>
+          <label class="check full"><input type="text" id="dmOther" placeholder="Other (optional)"/></label>
         </div>
-        <div>
-          <label>Negotiator</label>
-          <select id="negotiator"><option value="">— Select officer —</option></select>
-        </div>
+      </fieldset>
+
+      <h3 class="muted">Vehicle</h3>
+      <div class="row">
+        <label class="full">Description
+          <input id="vehDesc" placeholder="e.g., Black Sultan RS">
+        </label>
+      </div>
+      <div class="row">
+        <label>Color
+          <input id="vehColor" placeholder="Color">
+        </label>
+        <label>Plate
+          <input id="vehPlate" placeholder="Plate">
+        </label>
       </div>
 
-      <div style="margin-top:8px">
-        <label>Stayed Back For Hostage</label>
-        <select id="hostageBack"><option value="">— Select officer —</option></select>
+      <h3 class="muted">Outcome</h3>
+      <div class="row">
+        <label class="full">How did the chase end?
+          <select id="ending"></select>
+        </label>
       </div>
 
-      <h4>Pursuit Order</h4>
-      <div class="grid2">
-        <div><label>Primary</label><select id="primary"><option value="">— Select officer —</option></select></div>
-        <div><label>Passenger</label><select id="primaryPass"><option value="">— Select officer —</option></select></div>
-      </div>
-      <div class="grid2" style="margin-top:6px">
-        <div><label>Secondary</label><select id="secondary"><option value="">— Select officer —</option></select></div>
-        <div><label>Passenger</label><select id="secondaryPass"><option value="">— Select officer —</option></select></div>
-      </div>
-      <div class="grid2" style="margin-top:6px">
-        <div><label>Tertiary</label><select id="tertiary"><option value="">— Select officer —</option></select></div>
-        <div><label>Passenger</label><select id="tertiaryPass"><option value="">— Select officer —</option></select></div>
-      </div>
-      <div class="grid2" style="margin-top:6px">
-        <div><label>Parallel</label><select id="parallel"><option value="">— Select officer —</option></select></div>
-        <div><label>Passenger</label><select id="parallelPass"><option value="">— Select officer —</option></select></div>
-      </div>
-
-      <h4>Robbery</h4>
-      <div style="display:flex;gap:10px;color:#cbd5e1">
-        <label class="ck"><input type="radio" name="robType" value="Jewelry Store"> <span>Jewelry Store</span></label>
-        <label class="ck"><input type="radio" name="robType" value="Fleeca Bank"> <span>Fleeca Bank</span></label>
-        <label class="ck"><input type="radio" name="robType" value="24/7 Store"> <span>24/7 Store</span></label>
-      </div>
-      <select id="whichFleeca" style="margin-top:6px;display:none">
-        <option value="">Which Fleeca…</option>
-        <option>Legion Square</option><option>Burton</option><option>Rockford Hills (Lifeinvader)</option>
-        <option>Alta</option><option>Great Ocean</option><option>Route 68</option><option>Pink Cage</option>
-      </select>
-      <select id="which247" style="margin-top:6px;display:none">
-        <option value="">Which 24/7…</option>
-        <option>Strawberry 24/7</option><option>Davis LTD 24/7</option><option>Murrieta Heights Rob's Liquor</option>
-        <option>Little Seoul LTD 24/7</option><option>Vespucci Canals Rob's Liquor</option><option>Morningwood Rob's Liquor</option>
-        <option>Mirror Park LTD 24/7</option><option>Downtown Vinewood 24/7</option><option>Tataviam Mountains 24/7</option>
-        <option>Banham Canyon Rob's Liquor</option><option>Banham Canyon 24/7</option><option>Richman Glen LTD 24/7</option>
-        <option>Chumash 24/7</option><option>Harmony 24/7</option><option>Grand Senora 24/7</option>
-        <option>Grapeseed LTD 24/7</option><option>Mount Chilliad 24/7</option>
-      </select>
-
-      <div class="grid3" style="margin-top:8px">
-        <div><label>Inside</label><select id="robInside"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-        <div><label>Outside</label><select id="robOutside"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-        <div><label>Hostages</label><select id="hostages"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-      </div>
-
-      <h4>Demands</h4>
-      <label class="ck"><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> <span>free passage with no spikes on perimeter</span></label>
-      <label class="ck"><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> <span>free passage with no spikes on the whole chase</span></label>
-      <label class="ck"><input type="checkbox" class="demand" value="no helicopter"> <span>no helicopter</span></label>
-      <label class="ck"><input type="checkbox" class="demand" value="no speed unit"> <span>no speed unit</span></label>
-      <label class="ck"><input type="checkbox" class="demand" value="no bike unit"> <span>no bike unit</span></label>
-      <input id="demandOther" placeholder="Anything else they demanded, or if they dropped a weapon for a demand" style="margin-top:6px"/>
-
-      <h4>Vehicle</h4>
-      <input id="vehDesc" placeholder="Description (e.g., Black Sultan RS)"/>
-      <div class="grid3" style="margin-top:6px">
-        <input id="vehColor" placeholder="Color"/>
-        <input id="vehPlate" placeholder="Plate"/>
-        <input id="vehRegTo" placeholder="Registered To"/>
-      </div>
-
-      <h4>Ending</h4>
-      <select id="ending">
-        <option value="">— Select how it ended —</option>
-        <option>Suspects declared Code Red</option>
-        <option>Vehicle boxed in | Ran on foot | Caught</option>
-        <option>Vehicle disabled | Ran on foot | Escaped</option>
-        <option>Vehicle swap x1 | Caught</option>
-        <option>Bike disabled | Surrendered</option>
-      </select>
-      <input id="endingCustom" placeholder="Custom ending (optional)" style="margin-top:6px"/>
-
-      <h4>Medical &amp; Processing</h4>
-      <label class="ck"><input id="medNeeded" type="checkbox"> <span>Medical attention needed</span></label>
-      <div class="grid3">
-        <div><label>Suspects</label><select id="medSus"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-        <div><label>Police</label><select id="medCop"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
-        <div><label>Hospital</label><select id="hospital"><option>Saint Fiacre</option><option>Mount Zonah</option><option>Sandy Shores Medical</option><option>Paleto Hospital</option><option>Cayo Perico</option></select></div>
-      </div>
-      <label class="ck"><input id="fleeHospital" type="checkbox"> <span>Attempted to flee at hospital</span></label>
-      <div class="grid2">
-        <div><label>Processed at</label><select id="processedAt"><option>MRPD</option><option>Sandy Shores Sheriff's Office</option><option>Davis PD</option><option>Paleto Police Department</option><option>Highway Police Department</option></select></div>
-        <div><label>&nbsp;</label><label class="ck"><input id="pleadNC" type="checkbox"> <span>Plead no contest</span></label></div>
+      <h3 class="muted">Medical & Processing</h3>
+      <div class="row">
+        <label>Hospital
+          <select id="hospital">
+            <option>Saint Fiacre</option><option>Mount Zonah</option><option>Sandy Shores Medical</option><option>Paleto Hospital</option><option>Cayo Perico</option>
+          </select>
+        </label>
+        <label>Processed at
+          <select id="processedAt">
+            <option>MRPD</option><option>Sandy Shores Sheriff's Office</option><option>Davis PD</option><option>Paleto Police Department</option><option>Highway Police Department</option>
+          </select>
+        </label>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <h3>Report</h3>
-    <div class="section">
-      <textarea id="out" spellcheck="false" placeholder="Report will generate here…"></textarea>
-    </div>
-    <div class="btns">
-      <button id="btnCopy">Copy</button>
+    <h2>Report</h2>
+    <div class="body">
+      <textarea id="out"></textarea>
+      <div class="btns"><button class="btn" id="copy">Copy</button></div>
     </div>
   </section>
-</main>
+</div>
+</div>
 
 <script>
-let OFFICERS=[];
-const S=id=>document.getElementById(id);
-function fmt(o){return `${o.cs} — ${o.name}`;}
-function populateSel(sel){
-  sel.innerHTML='<option value=\"\">— Select officer —</option>';
-  OFFICERS.forEach(o=>{ const opt=document.createElement('option'); opt.value=fmt(o); opt.textContent=fmt(o); sel.appendChild(opt); });
-  sel.value=''; sel.selectedIndex=0;
-}
-function loadOfficers(){
-  fetch('./assets/officers.json',{cache:'no-store'})
-    .then(r=>r.json()).then(list=>{OFFICERS=list; init();})
-    .catch(()=>{console.warn('officers.json missing'); init();});
-}
+// ---------- data helpers ----------
+const OFFICERS_URL='assets/officers.json';
+const officersFallback=[]; // leave empty; page still works if JSON missing
+const ENDINGS=[
+ 'Units lost eyes | Escaped','Suspects caught | General Ending','Surrendered | General Ending',
+ 'Got out of vehicle | Ran on foot | Caught','Got out of vehicle | Ran on foot | Escaped',
+ 'Vehicle disabled | Ran on foot | Caught','Vehicle disabled | Ran on foot | Escaped',
+ 'Vehicle disabled | Vehicle swap | Caught','Vehicle disabled | Vehicle swap | Escaped',
+ 'Vehicle boxed in | Surrendered','Vehicle tires popped | Ran on foot | Caught','Vehicle tires popped | Surrendered'
+];
+const FLEECA=['Legion Square','Burton','Rockford Hills (Lifeinvader)','Alta','Great Ocean','Route 68','Pink Cage'];
+const TWOFOR7=['Strawberry 24/7','Davis LTD 24/7','Murrieta Heights Rob\\'s Liquor','Little Seoul LTD 24/7','Vespucci Canals Rob\\'s Liquor','Morningwood Rob\\'s Liquor','Mirror Park LTD 24/7','Downtown Vinewood 24/7','Tataviam Mountains 24/7','Banham Canyon Rob\\'s Liquor','Banham Canyon 24/7','Richman Glen LTD 24/7','Chumash 24/7','Harmony 24/7','Grand Senora 24/7','Grapeseed LTD 24/7','Mount Chilliad 24/7'];
 
-const RF={};
-function bindSelect(id){const el=S(id); populateSel(el); el.addEventListener('change',()=>{RF[id]=el.value; build();});}
-function bindInput(id){const el=S(id); el.addEventListener('input',()=>{RF[id]=el.value; build();});}
+// ---------- dom ----------
+const ids=(...a)=>a.map(id=>document.getElementById(id));
+const [you,scene,nego,hostageBack,p1,p1pass,p2,p2pass,p3,p3pass,par,parpass,rType,rLoc,inside,outside,hostages,vehDesc,vehColor,vehPlate,ending,hospital,processedAt,out,copyBtn]=
+ids('you','scene','nego','hostageBack','p1','p1pass','p2','p2pass','p3','p3pass','par','parpass','rType','rLoc','inside','outside','hostages','vehDesc','vehColor','vehPlate','ending','hospital','processedAt','out','copy');
 
-function bindDemands(){
-  document.querySelectorAll('.demand').forEach(cb=>cb.addEventListener('change',build));
+// ---------- populate helpers ----------
+function optize(select, list, placeholder='— Select officer —'){
+  select.innerHTML='';
+  if(placeholder) select.appendChild(new Option(placeholder,''));
+  (list||[]).forEach(o=> select.appendChild(new Option(`${o.cs} — ${o.name}`, `${o.cs} — ${o.name}`)));
 }
-function bindRobberyType(){
-  document.querySelectorAll('input[name=robType]').forEach(r=>{
-    r.addEventListener('change',()=>{
-      RF.robType=r.value;
-      S('whichFleeca').style.display = RF.robType==='Fleeca Bank' ? 'block':'none';
-      S('which247').style.display   = RF.robType==='24/7 Store' ? 'block':'none';
-      build();
-    });
-  });
-  ['whichFleeca','which247','robInside','robOutside','hostages','ending','hospital','processedAt'].forEach(id=>{
-    S(id).addEventListener('change',()=>{ RF[id]=S(id).value; build(); });
-  });
-  ['endingCustom','demandOther','vehDesc','vehColor','vehPlate','vehRegTo'].forEach(bindInput);
-  ['medNeeded','fleeHospital','pleadNC'].forEach(id=>{S(id).addEventListener('change',build)});
+function rangeSel(sel,max){ sel.innerHTML=''; for(let i=0;i<=max;i++) sel.appendChild(new Option(i,i)); }
+function fillLocations(){
+  const type=rType.value;
+  rLoc.innerHTML='';
+  if(type==='Fleeca Bank'){ FLEECA.forEach(x=>rLoc.appendChild(new Option(x,x))); }
+  else if(type==='24/7 Store'){ TWOFOR7.forEach(x=>rLoc.appendChild(new Option(x,x))); }
+  else { rLoc.appendChild(new Option('Vangelico Jewelry','Vangelico Jewelry')); }
 }
 
-function init(){
-  ['officerSelf','sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass'].forEach(bindSelect);
-  bindRobberyType(); bindDemands();
-  build();
-}
-
-function nonEmpty(arr){return arr.filter(Boolean);}
-
+// ---------- report builder ----------
 function build(){
-  const g=k=>RF[k]||'';
-  const robType=g('robType');
-  const which = robType==='Fleeca Bank' ? (g('whichFleeca')||'**Enter bank name here**')
-              : robType==='24/7 Store' ? (g('which247')||'**Enter store name here**') : '';
+  const dm=[...document.querySelectorAll('.dm:checked')].map(x=>x.value);
+  const other=document.getElementById('dmOther').value.trim(); if(other) dm.push(other);
 
-  const demands=[...document.querySelectorAll('.demand:checked')].map(x=>x.value);
-  if(g('demandOther')) demands.push(g('demandOther'));
+  const sec = (title, lines)=>`[${title}]:\\n${lines.join('\\n')}`;
+  const S = []; // sections
 
-  const lines=[];
-  // REPORTING OFFICER
-  if(g('officerSelf')){ lines.push('[REPORTING OFFICER]:'); lines.push(g('officerSelf')); lines.push(''); }
+  // Reporting
+  if(you.value) S.push(sec('REPORTING OFFICER',[you.value]));
 
-  // SCENE ASSIGNMENT
-  lines.push('[SCENE ASSIGNMENT]:');
-  lines.push(`Scene Command: ${g('sceneCmd')||'[Insert Officer]'}`);
-  lines.push(`Negotiator: ${g('negotiator')||'[Insert Officer]'}`);
-  lines.push(`Stayed Back For Hostage: ${g('hostageBack')||'[Insert Officer]'}`);
-  lines.push('');
+  // Scene assignment
+  const a1=scene.value||'[Insert Officer]';
+  const a2=nego.value||'[Insert Officer]';
+  const a3=hostageBack.value||'[Insert Officer]';
+  S.push(sec('SCENE ASSIGNMENT',[`Scene Command: ${a1}`,`Negotiator: ${a2}`,`Stayed Back For Hostage: ${a3}`]));
 
-  // INVOLVED IN PURSUIT
-  const PO=[['Primary',g('primary'),g('primaryPass')],['Secondary',g('secondary'),g('secondaryPass')],['Tertiary',g('tertiary'),g('tertiaryPass')],['Parallel',g('parallel'),g('parallelPass')]];
-  if(PO.some(x=>x[1]||x[2])){
-    lines.push('[INVOLVED IN PURSUIT]:');
-    PO.forEach(([label,unit,pass])=>{ if(unit||pass) lines.push(`${label}: ${unit||'—'}${pass?`  |  Passenger: ${pass}`:''}`); });
-    lines.push('');
+  // Pursuit
+  const purs=[['Primary',p1.value,p1pass.value],['Secondary',p2.value,p2pass.value],['Tertiary',p3.value,p3pass.value],['Parallel',par.value,parpass.value]]
+    .filter(([_,u,p])=>u||p).map(([l,u,p])=>`${l}: ${u||'—'}${p?`  |  Passenger: ${p}`:''}`);
+  if(purs.length) S.push(sec('INVOLVED IN PURSUIT', purs));
+
+  // Details | Demands
+  const numbers=[`Robbers Inside: ${inside.value}`,`Robbers Outside: ${outside.value}`,`Hostages: ${hostages.value}`];
+  let demandLine = dm.length ? `Demands included: ${dm.join('; ')}.` : 'No special demands recorded.';
+  const details = [
+    `Robbery Type: ${rType.value}`,
+    `Location: ${rLoc.value || '[Enter name]'}`,
+    ...numbers,
+    demandLine
+  ];
+  S.push(sec('DETAILS | DEMANDS', details));
+
+  // Vehicle | Chase
+  const v=[];
+  if(vehDesc.value) v.push(`Vehicle: ${vehDesc.value}`);
+  if(vehColor.value||vehPlate.value){
+    v.push(`Details: ${vehColor.value?vehColor.value+' ':''}${vehPlate.value?('| Plate: '+vehPlate.value):''}`.trim());
   }
+  v.push(`Ending: ${ending.value || '[Describe ending]'}`);
+  S.push(sec('VEHICLE | CHASE', v));
 
-  // DETAILS | DEMANDS
-  if(robType){
-    lines.push('[DETAILS | DEMANDS]:');
-    lines.push(`Robbery Type: ${robType}${which?`  |  ${robType==='Fleeca Bank'?'Which Fleeca':'Which 24/7'}: ${which}`:''}`);
-    lines.push(`Robbers Inside: ${g('robInside')||'—'}`);
-    lines.push(`Robbers Outside: ${g('robOutside')||'—'}`);
-    lines.push(`Hostages: ${g('hostages')||'—'}`);
-    if(demands.length){
-      lines.push('Demands:');
-      demands.forEach(d=>lines.push(`- ${d}`));
-      // simple sentence from selected demands
-      const short = demands.slice(0,3).join(', ').replace(/, ([^,]*)$/, ' and \\1');
-      lines.push(`During negotiations, suspects asked for ${short.toLowerCase()}.`);
-    }
-    lines.push('');
-  }
+  // Medical | Processing
+  S.push(sec('MEDICAL | PROCESSING',[`Hospital: ${hospital.value}`,`Processed at: ${processedAt.value}`]));
 
-  // VEHICLE | CHASE
-  const veh = nonEmpty([g('vehDesc')&&`Description: ${g('vehDesc')}`, g('vehColor')&&`Color: ${g('vehColor')}`, g('vehPlate')&&`Plate: ${g('vehPlate')}`, g('vehRegTo')&&`Registered To: ${g('vehRegTo')}`]);
-  const ending = g('endingCustom')||g('ending');
-  if(veh.length || ending){
-    lines.push('[VEHICLE | CHASE]:');
-    veh.forEach(v=>lines.push(`- ${v}`));
-    if(ending) lines.push(`- Ending: ${ending}`);
-    lines.push('');
-  }
-
-  // MEDICAL | PROCESSING
-  const medNeeded = document.getElementById('medNeeded').checked;
-  const fleeHospital = document.getElementById('fleeHospital').checked;
-  const pleadNC = document.getElementById('pleadNC').checked;
-  if(medNeeded || g('medSus') || g('medCop') || g('hospital') || fleeHospital || g('processedAt') || pleadNC){
-    lines.push('[MEDICAL | PROCESSING]:');
-    if(medNeeded) lines.push('- Medical attention was required.');
-    if(g('medSus')) lines.push(`- Suspects treated: ${g('medSus')}`);
-    if(g('medCop')) lines.push(`- Police treated: ${g('medCop')}`);
-    if(g('hospital')) lines.push(`- Hospital: ${g('hospital')}`);
-    if(fleeHospital) lines.push('- Attempted to flee at hospital.');
-    if(g('processedAt')) lines.push(`- Processed at: ${g('processedAt')}`);
-    if(pleadNC) lines.push('- Suspect(s) plead no contest.');
-    lines.push('');
-  }
-
-  S('out').value=lines.join('\\n');
+  out.value = S.join('\\n\\n');
 }
 
-document.getElementById('btnCopy').addEventListener('click',()=>navigator.clipboard.writeText(S('out').value));
+// ---------- wire ----------
+;[you,scene,nego,hostageBack,p1,p1pass,p2,p2pass,p3,p3pass,par,parpass,rType,rLoc,inside,outside,hostages,vehDesc,vehColor,vehPlate,ending,hospital,processedAt]
+.forEach(el=>el.addEventListener('change',build));
+document.querySelectorAll('.dm').forEach(el=>el.addEventListener('change',build));
+document.getElementById('dmOther').addEventListener('input',build);
+copyBtn.addEventListener('click',()=>navigator.clipboard.writeText(out.value));
 
-loadOfficers();
+// ---------- init ----------
+rangeSel(inside,6); rangeSel(outside,6); rangeSel(hostages,10);
+ending.innerHTML = ENDINGS.map(x=>`<option>${x}</option>`).join('');
+rType.addEventListener('change',()=>{ fillLocations(); build(); });
+
+// load officers
+fetch(OFFICERS_URL).then(r=> r.ok ? r.json(): Promise.resolve(officersFallback)).catch(()=>officersFallback).then(list=>{
+  const L = Array.isArray(list)?list:officersFallback;
+  [you,scene,nego,hostageBack,p1,p1pass,p2,p2pass,p3,p3pass,par,parpass].forEach(sel=>optize(sel,L));
+  fillLocations();
+  build();
+});
 </script>
 </body>
 </html>
