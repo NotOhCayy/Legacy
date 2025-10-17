@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Incident Charge Calculator</title>
+  <style>
+    :root{--bg:#0b0f16;--card:#111826;--muted:#93a1b1;--text:#e6edf3;--accent:#3b82f6;--ok:#16a34a;--warn:#eab308;--bad:#ef4444}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{padding:20px 16px;border-bottom:1px solid #1f2937;background:linear-gradient(180deg,#0e1624,#0b0f16)}
+    header h1{margin:0;font-size:20px}
+    header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    main{display:grid;grid-template-columns:330px 1fr;gap:16px;padding:16px;max-width:1300px;margin:0 auto}
+    .panel{background:var(--card);border:1px solid #1f2937;border-radius:14px;overflow:hidden}
+    .panel h2{margin:0;padding:12px 14px;border-bottom:1px solid #1f2937;font-size:14px;letter-spacing:.2px;color:#cbd5e1}
+    .section{padding:12px 14px}
+    input,select,button,textarea{font:inherit}
+    input[type="text"], input[type="number"], select, textarea{width:100%;padding:8px 10px;border:1px solid #243042;background:#0d1422;color:var(--text);border-radius:10px}
+    input::placeholder, textarea::placeholder{color:#64748b}
+    .row{display:flex;gap:10px}
+    .stack{display:flex;flex-direction:column;gap:8px}
+    .charges-list{max-height:360px;overflow:auto;border:1px solid #1f2937;border-radius:10px}
+    .charge-item{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px dashed #1f2937}
+    .charge-item:last-child{border-bottom:none}
+    .code{font-weight:600;color:#93c5fd}
+    .def{color:#93a1b1;font-size:12px}
+    .pill{display:inline-block;background:#0b1220;border:1px solid #1f2937;border-radius:999px;padding:2px 8px;font-size:11px;color:#a3b1c2;margin-left:6px}
+    .btn{background:#0d1422;border:1px solid #20304d;color:#cbd5e1;border-radius:10px;padding:7px 10px;cursor:pointer}
+    .btn:hover{border-color:#335a99}
+    .btn-primary{background:var(--accent);border-color:#2f66c5;color:white}
+    .btn-ghost{background:transparent;border-color:#263246}
+    .selected-list{max-height:280px;overflow:auto;border:1px solid #1f2937;border-radius:10px}
+    .selected-row{display:grid;grid-template-columns:86px 1fr 100px 120px 70px 30px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px dashed #1f2937}
+    .selected-row:last-child{border-bottom:none}
+    .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+    .card{background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:10px}
+    .muted{color:var(--muted)}
+    .tag{display:inline-block;font-size:11px;padding:2px 6px;border-radius:6px;border:1px solid #1f2937;background:#0d1422;margin-right:6px;margin-top:4px}
+    textarea#report{height:220px;white-space:pre-wrap}
+    .sticky-footer{display:flex;gap:8px;justify-content:flex-end;padding:10px;border-top:1px solid #1f2937;background:#0e1624;position:sticky;bottom:0}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .small{font-size:12px}
+    @media (max-width:1000px){main{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Incident Charge Calculator</h1>
+  <p>Search charges, add counts, apply enhancements, and generate a clean report. Autosave + URL autofill included.</p>
+</header>
+<main>
+  <!-- Left: Charge Catalog & Enhancements -->
+  <aside class="panel">
+    <h2>Charges Catalog</h2>
+    <div class="section stack">
+      <input id="search" type="text" placeholder="Search code or name (e.g., 304, Robbery)" />
+      <div class="charges-list" id="catalog"></div>
+    </div>
+
+    <h2>Enhancements</h2>
+    <div class="section stack" id="enhancements"></div>
+
+    <div class="section">
+      <button id="clearAll" class="btn btn-ghost">Clear selection</button>
+      <button id="shareLink" class="btn">Share prefilled link</button>
+    </div>
+  </aside>
+
+  <!-- Right: Selection, Totals, Report -->
+  <section class="panel">
+    <h2>Selected Charges</h2>
+    <div class="section">
+      <div class="selected-list" id="selected"></div>
+      <div class="sum">
+        <div class="card"><div class="muted small">Total Time</div><div id="sumTime" style="font-size:18px"></div></div>
+        <div class="card"><div class="muted small">Total Fine</div><div id="sumFine" style="font-size:18px"></div></div>
+        <div class="card"><div class="muted small">Total Points</div><div id="sumPoints" style="font-size:18px"></div></div>
+        <div class="card"><div class="muted small">Flags</div><div id="sumFlags" class="small"></div></div>
+      </div>
+    </div>
+
+    <h2>Report</h2>
+    <div class="section">
+      <div class="grid2">
+        <input id="officer" type="text" placeholder="Officer/Callsign (optional)" />
+        <input id="suspect" type="text" placeholder="Suspect name (optional)" />
+      </div>
+      <textarea id="report" class="card" placeholder="Generated report will appear here..."></textarea>
+      <div class="sticky-footer">
+        <button id="copy" class="btn">Copy</button>
+        <button id="print" class="btn">Print</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/***** Data *****/
+/** Helper to build charge entries */
+function C(code,name,definition,time,fine,result,points){
+  return {code,name,definition,time,fine,result:parseResult(result),points:points??0};
+}
+function parseResult(r){
+  const arr=(r||'').split(',').map(s=>s.trim()).filter(Boolean);
+  return { raw:arr, per:arr.includes('Per'), seize:arr.includes('Seize') };
+}
+
+// Title/Definitions (101-129)
+const TITLES = [
+  {code:'P.C. 101', name:'Public Servant', def:'Any person employed by the EMS, BCFD, State, or the DOJ, including Bar Certified individuals, the Vice Governor, Governor, Judges and Chief Justice.'},
+  {code:'P.C. 102', name:'Peace Officer', def:'Any Police Officer, State Trooper, Highway Patrol, Sheriff Deputy, County Sheriff, or Department of Corrections Officer.'},
+  {code:'P.C. 103', name:'Notary Public', def:'Any person employed directly by the DOJ. This person can notarise affidavits.'},
+  {code:'P.C. 104', name:'Reasonable Suspicion', def:'A specific, justifiable suspicion that is based on specific facts or circumstances about a specific individual.'},
+  {code:'P.C. 105', name:'Probable Cause (PC)', def:'Reasonable grounds for believing a person is guilty of a criminal act.'},
+  {code:'P.C. 106', name:'Per', def:'Any charge labelled with Per should be given once for each contraband seized.'},
+  {code:'P.C. 107', name:'Seize', def:'Contraband, weapons, money, substances, and/or vehicles must be seized indefinitely if related to the crime.'},
+  {code:'P.C. 108', name:'Points', def:'Penalty points are issued for vehicular offences; >15 loses licence.'},
+  {code:'P.C. 109', name:'Possession', def:'Contraband on person, vehicle, or estate.'},
+  {code:'P.C. 110', name:'Class A Substance', def:'Cocaine, Methamphetamine, Psilocybe Cyanescens (Shrooms), including synthetic alternative.'},
+  {code:'P.C. 111', name:'Class B Substance', def:'Marijuana, LSD (Acid), or Lean, including synthetic analogue.'},
+  {code:'P.C. 112', name:'Class 1 Weapon', def:'Ammu-Nation lethal weapons (incl. replicas).'},
+  {code:'P.C. 113', name:'Class 2 Weapon', def:'Single Fire Pistols not manufactured by Ammu-Nation (incl. replicas).'},
+  {code:'P.C. 114', name:'Class 3 Weapon', def:'Automatic Pistols, SMGs, Shotguns (incl. replicas).'},
+  {code:'P.C. 115', name:'Class 4 Weapon', def:'Assault Rifles, Sniper Rifles, Muskets (incl. replicas).'},
+  {code:'P.C. 116', name:'Class 5 Weapon', def:'Incendiary and/or explosive devices (incl. replicas).'},
+  {code:'P.C. 117', name:'Property', def:'Anything owned by a person or entity.'},
+  {code:'P.C. 118', name:'Government Property', def:'Any property owned or issued by the Government.'},
+  {code:'P.C. 119', name:"Reporter’s Privilege", def:'Protects reporters from being compelled to testify about confidential info or sources.'},
+  {code:'P.C. 120', name:'RICO', def:'Racketeering Influenced and Corrupt Organizations Act.'},
+  {code:'P.C. 121', name:'HUT', def:'Held Until Trial (judge-only).' },
+  {code:'P.C. 122', name:'Speed Limits', def:'50 mph city/town, 100 mph divided highway/interstate.'},
+  {code:'P.C. 123', name:'General Intent Crime', def:'Only the act must be shown; not the specific result intended.'},
+  {code:'P.C. 124', name:'Specific Intent Crime', def:'Prosecution must show intention to violate the law.'},
+  {code:'P.C. 125', name:'PlayStation Pistols', def:'VR weapons not illegal but avoid carrying to prevent confusion.'},
+  {code:'P.C. 126', name:'Narcotics', def:'Painkillers, Antibiotics, Fentanyl, OxyContin (incl. synthetics).'},
+  {code:'P.C. 127', name:'Lockpicks', def:'Includes Basic/Advanced Lockpicks and Multitools.'},
+  {code:'P.C. 128', name:'Firearms', def:'Any weapon designed to expel a projectile by explosion (incl. tasers/beanbags).'},
+  {code:'P.C. 129', name:'Distilled Spirits', def:'Spirits produced by distillation.'}
+];
+
+// Charges (subset defined from user's list, preserving times/fines/points/results)
+const CHARGES = [
+  C('P.C. 201','Criminal Threat','Intentionally puts another in the belief of physical harm or offensive contact.',10,300,'-'),
+  C('P.C. 202','Assault and Battery','Uses violence to cause physical harm to another person without a weapon.',20,800,'-'),
+  C('P.C. 203','Second Degree Aggravated Assault and Battery','Spontaneous act with deadly weapon/dangerous object; no premeditation.',40,1000,'Seize'),
+  C('P.C. 204','First Degree Aggravated Assault and Battery','Premeditated attack with intent to cause serious harm or death.',60,1500,'Seize'),
+  C('P.C. 205','Torture','Causes extreme pain and suffering to another person.',70,1200,'Seize'),
+  C('P.C. 206','Maiming','Disabling/disfiguring/removing limbs (all extremities).',350,4000,'Per, Seize'),
+  C('P.C. 207','Terroristic Threat','Places another in fear of terrorism happening.',30,1000,'Seize'),
+  C('P.C. 208','Terrorism','Violent criminal act to further political/religious/social/environmental goals.','HUT','HUT','Seize'),
+  C('P.C. 209','Involuntary Manslaughter','Reckless/negligent act resulting in death.','HUT','HUT','Seize'),
+  C('P.C. 210','Voluntary Manslaughter','Heat of passion killing due to strong provocation.','HUT','HUT','Seize'),
+  C('P.C. 211','Second Degree Murder','Unlawful killing without prior planning; reckless/intentional violence.', 'HUT','HUT','Seize'),
+  C('P.C. 212','First Degree Murder','Intentional and premeditated killing.', 'HUT','HUT','Seize'),
+  C('P.C. 213','False Imprisonment','Unlawfully restrains/detains/confines another.',10,600,'-'),
+  C('P.C. 214','Kidnapping','Took another person from A to B without consent.',50,1000,'Seize'),
+  C('P.C. 215','Destructive Use of Blasting Agents','Uses incendiary/explosive device to cause harm.',85,2500,'Seize'),
+  C('P.C. 301','Loitering','Fails to leave property when asked by representative.',10,250,'-'),
+  C('P.C. 302','Trespassing','Enters/remains on land after being ordered to leave / posted no entry.',10,300,'-'),
+  C('P.C. 303','Burglary','Entering property to commit a crime. Auto-burglary for vehicles.',25,600,'Seize'),
+  C('P.C. 304','Robbery','Taking property from person via threat/force.',25,400,'Seize'),
+  C('P.C. 305','Armed Robbery','Robbery with a weapon.',40,850,'Seize'),
+  C('P.C. 306','Robbery of a Shop','Taking property within a store.',40,1000,'Seize'),
+  C('P.C. 307','Robbery of a Bank','Taking property within a bank.',80,2500,'Seize'),
+  C('P.C. 308','Robbery of a Stockade','Taking property within a Stockade/armored vehicle.',110,3000,'Seize'),
+  C('P.C. 309','Robbery of a Jewellery Store','Taking property within a Jewellery Store.',140,3500,'Seize'),
+  C('P.C. 310','Theft','Takes personal property without consent.',10,200,'Per'),
+  C('P.C. 311','Grand Theft','Theft value > $3000.',15,1000,'Per'),
+  C('P.C. 312','Grand Theft Auto','Takes a vehicle to deprive owner.',30,1000,'-'),
+  C('P.C. 313','Destruction of Private Property','Willful damaging/defacement.',10,350,'-'),
+  C('P.C. 314','Possession of Stolen Property','Possesses reported stolen property.',10,350,'Per, Seize'),
+  C('P.C. 315','Receiving Stolen Property','Accepted goods knowing they were stolen.',25,400,'-'),
+  C('P.C. 316','Corruption','Abuse of entrusted authority for private gain.',55,1100,'-'),
+  C('P.C. 317','Fraud','Deliberate misrepresentation to deprive someone of property.',20,450,'-'),
+  C('P.C. 318','Forgery','Making/possessing false writing with intent to defraud.',30,600,'-'),
+  C('P.C. 319','Vandalism','Malicious destruction/defacement with malicious intent.',10,300,'Seize'),
+  C('P.C. 320','Arson','Starts fire/causes explosion intending damage.',20,600,'Seize'),
+  C('P.C. 321','Animal Abuse','Intentionally harming dogs, cats, birds.',20,600,'Seize'),
+  C('P.C. 322','Animal Negligence','Intentionally puts an animal in danger.',20,700,'Seize'),
+  C('P.C. 323','Hunting Without a License','Uses hunting weapon without license.',50,1500,'Seize'),
+  C('P.C. 324','Possession of Contraband','Has 1-10 keys/chips/plates/etc.',10,150,'Per, Seize'),
+  C('P.C. 325','Trafficking of Contraband','Has 11+ keys/chips/plates/etc.',30,2000,'Seize'),
+  C('P.C. 326','Possession of Contraband in Crime','Has 1-10 thermite/lockpicks/etc and uses in related crime.',15,200,'Per, Seize'),
+  C('P.C. 327','Trafficking of Contraband in Crime','Has 11+ thermite/lockpicks/etc and uses in related crime.',220,3000,'Seize'),
+  C('P.C. 328','Breaching Company Regulations','Disregarded official company regulations.',10,4000,'Per, Seize'),
+  C('P.C. 329','Damaging a Communication Device','Removes/destroys/obstructs device to prevent help.',40,600,'Seize'),
+  C('P.C. 330','Extortion','Unlawful taking via intimidation.',60,2500,'Per, Seize'),
+  C('P.C. 401','Disorderly Conduct','Intentionally disturbs public peace.',10,400,'-'),
+  C('P.C. 402','Public Indecency','Excessively lewd acts in public.',10,500,'Per'),
+  C('P.C. 403','Obstructing Emergency Services','Hinders EMS/BCFD in duties.',30,1000,'Per'),
+  C('P.C. 501','Bribery','Property exchanged to influence a public official.',25,500,'-'),
+  C('P.C. 502','Disregarding a Lawful Command','Ignores a lawful command from a peace officer.',10,300,'-'),
+  C('P.C. 503','Impersonation of a Public Servant','Falsely represents as a public servant.',20,500,'-'),
+  C('P.C. 504','Impersonation of a Peace Officer','Falsely represents as a peace officer.',30,900,'-'),
+  C('P.C. 505','Obstruction of Justice','Corruptly obstructs due administration of justice.',10,450,'-'),
+  C('P.C. 506','Resisting a Peace Officer','Avoids/resists apprehension.',20,600,'-'),
+  C('P.C. 507','Felony Resisting a Peace Officer','Resists with attempt/threat of physical violence.',30,1000,'-'),
+  C('P.C. 508','Misuse of a Mobile Hotline','Uses emergency hotline for non-emergencies.',5,500,'-'),
+  C('P.C. 509','Tampering with Evidence','Alters evidence to mislead.',50,2000,'-'),
+  C('P.C. 510','Unlawful Arrest','Detains without PC/warrant/consent.',35,750,'-'),
+  C('P.C. 511','Contempt of Court','Disturbance impeding court functioning.',20,500,'-'),
+  C('P.C. 512','Breach of Contract','Failure to terms of legally binding contract.',10,1000,'-'),
+  C('P.C. 513','Violation of a Court Order','Violation of a Judge’s order.',30,1400,'-'),
+  C('P.C. 514','Wearing a Disguise to Evade Police','Mask/disguise to evade identification in a crime.',0,800,'-'),
+  C('P.C. 515','Perjury','Knowingly false testimony under oath.',50,1500,'-'),
+  C('P.C. 516','Violating a Protective Order','Intentional violation of protective order.',50,1500,'-'),
+  C('P.C. 517','Prisoner Escaping Custody','Prisoner escapes during transport.',50,1500,'-'),
+  C('P.C. 518','Rescuing a Prisoner','Rescues/aids escape from lawful custody.',100,1500,'-'),
+  C('P.C. 519','Sightseeing at the Scene of an Emergency','Stops at scene to view emergency without duty.',15,250,'-'),
+  C('P.C. 520','Harbouring a Fugitive','Knowingly hides criminal with warrant/escaped.',40,1000,'-'),
+  C('P.C. 521','Illegal access of a system','Accesses an electronic system without required access.',60,2000,'Per, Seize'),
+  C('P.C. 522','Illegal access of a restricted government system','Accesses a government system without access.',150,4500,'Per, Seize'),
+  C('P.C. 601','Incitement to Riot','Urges/leads others to riot/violence/insurrection.',10,450,'-'),
+  C('P.C. 602','Public Intoxication','In public under influence of alcohol/drugs.',5,300,'Seize'),
+  C('P.C. 603','Public Endangerment','Reckless conduct endangering death/serious injury.',20,400,'Seize'),
+  C('P.C. 604','Verbal Harassment','Intent to harass/annoy/alarm via speech.',10,300,'-'),
+  C('P.C. 605','Harassment','Continues unwanted actions after asked to stop.',30,600,'-'),
+  C('P.C. 606','Civil Negligence','Conduct below reasonable safety standard.',10,400,'-'),
+  C('P.C. 607','Criminal Negligence','Below standard with intent to harm.',20,500,'Seize'),
+  C('P.C. 608','Stalking','Harassing/threatening causing reasonable fear.',40,1000,'-'),
+  C('P.C. 701','Maintaining a Place for Distribution','Keys to property for selling/storing illegal items.',25,600,'Seize'),
+  C('P.C. 702','Felony Maintaining a Place for Distribution','Keys to property for storing illegal weapons.',50,1200,'Seize'),
+  C('P.C. 703','Sale of a Controlled Substance','Offers/sells/transports/gives narcotics/Class A/B.',20,400,'Seize'),
+  C('P.C. 704','Possession of a Class B Substance','11-24 joints, 1-19q weed, 1-4 bud, 1-4 acid, or 1-6 lean.',5,200,'Per, Seize'),
+  C('P.C. 705','Drug Trafficking of a Class B Substance','25+ joints, 20q+ weed, 5+ buds, 5+ acid, 7+ lean.',50,3500,'Seize'),
+  C('P.C. 706','Possession of a Class A Substance','1-7 bags cocaine/meth or 1-4 shrooms.',10,500,'Per, Seize'),
+  C('P.C. 707','Drug Trafficking of a Class A Substance','1+ bricks, 8+ bags cocaine/meth, 5+ shrooms.',70,5000,'Seize'),
+  C('P.C. 708','Intention to Sell Distilled Spirits','3+ distilled spirits with intent to sell.',5,100,'Per, Seize'),
+  C('P.C. 709','Possession of Narcotics','1-10 narcotics w/o prescription.',10,400,'Per, Seize'),
+  C('P.C. 710','Drug Trafficking of Narcotics','11+ narcotics w/o prescription.',70,4500,'Seize'),
+  C('P.C. 711','Manufacturing Controlled Substances','Manufacturing/producing/importing narcotics or Class A/B.',35,1000,'Seize'),
+  C('P.C. 712','Mining Without a License','Extracts gemstones/minerals w/o license.',20,1000,'Seize'),
+  C('P.C. 713','Mining Without a Scanner','Extracts without gemstone scanner (civil negligence).',15,500,'-'),
+  C('P.C. 801','Driving Without a License','Operating vehicle without proper ID.',0,300,'Seize',3),
+  C('P.C. 802','Driving With a Suspended License','Operating with suspended license.',10,400,'Seize'),
+  C('P.C. 803','Hit and Run','Leaves scene; fails to render aid.',25,750,'Seize',5),
+  C('P.C. 804','Speeding','Over speed limit; conditions considered.',0,300,'-',2),
+  C('P.C. 805','Excessive Speeding','30+ mph over limit; unsafe manner.',30,600,'Seize',3),
+  C('P.C. 806','Reckless Driving','Disregard of public safety.',20,600,'-',4),
+  C('P.C. 807','Traffic Violation','Any operation disregarding traffic laws.',0,200,'Per',2),
+  C('P.C. 808','Parking Violation','Parks outside designated public parking.',0,200,'Per',2),
+  C('P.C. 809','Evading a Peace Officer','Non-criminal refuses to stop after signal.',15,350,'Seize',4),
+  C('P.C. 810','Felony Evading a Peace Officer','Refuses to stop motor vehicle.',30,700,'Seize',6),
+  C('P.C. 811','Driving Under the Influence (DUI)','Operating under alcohol/drugs.',10,400,'Seize',10),
+  C('P.C. 812','Jaywalking','Crosses 4-lane highway outside crosswalk.',0,50,'-'),
+  C('P.C. 813','Joyriding','Operating vehicle without explicit permission (vehicle not proven stolen).',10,350,'Seize',2),
+  C('P.C. 814','Unauthorized Operations of an Aircraft','Operating aircraft without proper license.',20,1500,'Seize',4),
+  C('P.C. 815','Reckless Operations of an Aircraft','Operating aircraft with disregard for safety.',25,2500,'Seize',6),
+  C('P.C. 816','Improper Operations of an Aircraft','Violates Aviation SOPs (radio/tools).',10,500,'-'),
+  C('P.C. 817','Tampering with a Motor Vehicle','Injure/tamper/break/remove parts without consent.',15,750,'Per, Seize'),
+  C('P.C. 818','Engaging in a Speed Contest','High-speed race against another vehicle.',15,300,'Seize',2),
+  C('P.C. 819','Unlawful Transport of Prohibited Items','Intentional transport of illegal items.',40,1500,'Seize',3),
+  C('P.C. 901','Carrying a Firearm Without a License','Carrying/concealing without proper documentation.',25,400,'Seize'),
+  C('P.C. 902','Brandishing a Weapon','Openly carrying to elicit fear.',20,350,'Seize'),
+  C('P.C. 903','Weapons Discharge Violation','Discharges firearm unlawfully in restricted areas.',10,200,'Seize'),
+  C('P.C. 904','Felony Weapons Discharge Violation','Unlawful discharge endangering public.',20,400,'Seize'),
+  C('P.C. 905','Display of Tactical Gear','Wears/refuses to remove tactical vests/holsters in public.',5,200,'Per, Seize'),
+  C('P.C. 906','Possession of Unregistered Firearm','Firearm with no valid serial number.',10,500,'Per, Seize'),
+  C('P.C. 907','Possession of Class 2 Weapon','Possesses Class 2 weapon.',30,1000,'Per, Seize'),
+  C('P.C. 908','Possession of Class 3 Weapon','Possesses Class 3 weapon.',40,2000,'Per, Seize'),
+  C('P.C. 909','Possession of Class 4 Weapon','Possesses Class 4 weapon.',50,3000,'Per, Seize'),
+  C('P.C. 910','Possession of Class 5 Weapon','Possesses Class 5 weapon.',60,4500,'Per, Seize'),
+  C('P.C. 911','Trafficking of Class 2 Weapon','3+ Class 2 weapons.',150,5000,'Seize'),
+  C('P.C. 912','Trafficking of Class 3 Weapon','3+ Class 3 weapons.',200,8000,'Seize'),
+  C('P.C. 913','Trafficking of Class 4 Weapon','3+ Class 4 weapons.',250,11000,'Seize'),
+  C('P.C. 914','Trafficking of Class 5 Weapon','3+ Class 5 weapons.',275,17000,'Seize'),
+  C('P.C. 915','Possession of Extended Magazines','Possesses large-capacity magazine (unless peace officer on-duty).',10,500,'Per, Seize'),
+  C('P.C. 916','Possession of Silencers','Possesses silencer (unless peace officer on-duty).',30,1500,'Per, Seize'),
+  C('P.C. 917','Sale of a Firearm','Offers/sells/gives firearms without sales permit.',50,1000,'Seize'),
+  C('P.C. 1001','Racketeering','Pattern of profiteering crimes incl. money laundering, trafficking, murder.','HUT','HUT','Seize'),
+  C('P.C. 1002','Gaming','Gambling outside approved venues.',5,200,'Seize')
+];
+
+// Enhancements
+const ENH = [
+  {code:'P.C. 1101', name:'Accessory Before The Fact (ACC-BTF)', multiplier:1.25, note:'Seize'},
+  {code:'P.C. 1102', name:'Accessory After The Fact (ACC-ATF)',  multiplier:1.75, note:'Seize'},
+  {code:'P.C. 1103', name:'Aiding and Abetting (AAA)',           multiplier:2.00, note:'Seize'},
+  {code:'P.C. 1104', name:'Applicability (APP)',                 multiplier:1.00, note:'Per stacking allowed (already handled).'},
+  {code:'P.C. 1105', name:'Attempt (ATT)',                       multiplier:2.00, note:'Same punishment as completed offense.'},
+  {code:'P.C. 1106', name:'Conspiracy (CON)',                    multiplier:2.00, note:'Same punishment as completed offense.'},
+  {code:'P.C. 1107', name:'Soliciting (SOL)',                    multiplier:1.50, note:'Similar punishment as completed offense.'},
+  {code:'P.C. 1108', name:'Gang Enhancement (GE)',               multiplier:1.50},
+  {code:'P.C. 1109', name:'Protected Persons (PP)',              multiplier:1.40},
+  {code:'P.C. 1110', name:'Public Menace (PM)',                  multiplier:1.00, extraMonthsPer:600, count:0, configurable:true},
+  {code:'P.C. 1111', name:'Intent to Sell (ITS)',                multiplier:1.50},
+  {code:'P.C. 1112', name:'Protected Property (P-Prop)',         multiplier:1.20},
+  {code:'P.C. 1113', name:'Deface Firearm (DFF)',                multiplier:1.00, note:'Use with P.C. 906 if applicable.'}
+];
+
+/***** State *****/
+const state = {
+  selected: [], // {code,count}
+  enh: new Set(),
+  pmCount: 0,
+  officer:'',
+  suspect:''
+};
+
+/***** UI helpers *****/
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+function currency(n){return `$${Number(n||0).toLocaleString()}`}
+function months(n){return (n==='HUT')? 'HUT' : `${n} months`}
+
+/***** Catalog render *****/
+function renderCatalog(){
+  const q = $('#search').value.trim().toLowerCase();
+  const list = $('#catalog');
+  list.innerHTML='';
+  CHARGES.filter(c=>{
+    if(!q) return true;
+    return c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q);
+  }).forEach(c=>{
+    const row = document.createElement('div');
+    row.className='charge-item';
+    const left = document.createElement('div');
+    left.innerHTML = `<div><span class="code">${c.code}</span> — ${c.name}</div><div class="def">${c.definition}</div>`;
+    const qty = document.createElement('input');
+    qty.type='number'; qty.min='1'; qty.value='1'; qty.style.width='70px'; qty.title='Count';
+    const add = document.createElement('button'); add.className='btn'; add.textContent='Add';
+    add.onclick=()=>{
+      addCharge(c.code, parseInt(qty.value||'1',10));
+    };
+    row.append(left, qty, add);
+    list.appendChild(row);
+  });
+}
+
+function addCharge(code,count){
+  const found = state.selected.find(x=>x.code===code);
+  if(found){found.count += count;} else {state.selected.push({code,count});}
+  persist();
+  renderSelected();
+}
+
+function removeCharge(code){
+  state.selected = state.selected.filter(x=>x.code!==code);
+  persist();
+  renderSelected();
+}
+
+/***** Enhancements UI *****/
+function renderEnh(){
+  const box = $('#enhancements');
+  box.innerHTML='';
+  ENH.forEach(e=>{
+    const row = document.createElement('div');
+    row.className='card';
+    const id = `enh_${e.code.replace(/\W/g,'_')}`;
+    row.innerHTML = `
+      <label style="display:flex;gap:8px;align-items:center">
+        <input type="checkbox" id="${id}" ${state.enh.has(e.code)?'checked':''} />
+        <div>
+          <div><strong>${e.code}</strong> — ${e.name} <span class="pill">x${e.multiplier?.toFixed(2)??'1.00'}</span></div>
+          ${e.note?`<div class="muted small">${e.note}</div>`:''}
+        </div>
+      </label>
+    `;
+    box.appendChild(row);
+    const ck = row.querySelector('input');
+    ck.addEventListener('change',()=>{
+      if(ck.checked) state.enh.add(e.code); else state.enh.delete(e.code);
+      if(e.code==='P.C. 1110'){
+        // PM uses count field
+        if(ck.checked && state.pmCount===0) state.pmCount = 1;
+      } else {
+        // no-op
+      }
+      persist();
+      renderSelected();
+      renderEnh();
+    });
+
+    if(e.configurable){
+      const ctrl = document.createElement('div');
+      ctrl.className='row small';
+      ctrl.style.marginTop='6px';
+      ctrl.innerHTML = `
+        <label style="flex:1">Prior serious felonies (for PM +600 each)
+          <input type="number" id="pmCount" min="0" value="${state.pmCount||0}" />
+        </label>`;
+      box.appendChild(ctrl);
+      ctrl.querySelector('#pmCount').addEventListener('input',ev=>{
+        state.pmCount = parseInt(ev.target.value||'0',10);
+        persist();
+        renderSelected();
+      });
+    }
+  });
+}
+
+/***** Selected list + totals *****/
+function renderSelected(){
+  const area = $('#selected');
+  area.innerHTML='';
+  if(state.selected.length===0){
+    area.innerHTML = '<div class="muted small">No charges selected.</div>';
+  }
+  state.selected.forEach(item=>{
+    const c = CHARGES.find(x=>x.code===item.code);
+    if(!c) return;
+    const row = document.createElement('div');
+    row.className='selected-row';
+    row.innerHTML = `
+      <div class="code">${c.code}</div>
+      <div>${c.name}<div class="muted small">${c.definition}</div></div>
+      <input type="number" min="1" value="${item.count}" />
+      <div class="small">Time: ${months(c.time)}<br>Fine: ${currency(c.fine)}${c.points?`<br>Points: ${c.points}`:''}</div>
+      <div class="small">${c.result.per?'<span class="tag">Per</span>':''}${c.result.seize?'<span class="tag">Seize</span>':''}</div>
+      <button class="btn" title="Remove">✕</button>
+    `;
+    const qty = row.querySelector('input');
+    qty.addEventListener('input',()=>{ item.count = Math.max(1, parseInt(qty.value||'1',10)); persist(); calcAndRenderTotals(); buildReport(); });
+    row.querySelector('button').addEventListener('click',()=>removeCharge(item.code));
+    area.appendChild(row);
+  });
+  calcAndRenderTotals();
+  buildReport();
+}
+
+function activeEnh(){
+  return ENH.filter(e=>state.enh.has(e.code));
+}
+
+function calcTotals(){
+  let totalMonths = 0; let totalFine = 0; let totalPoints = 0; let flags = new Set(); let hut=false;
+  state.selected.forEach(item=>{
+    const c = CHARGES.find(x=>x.code===item.code); if(!c) return;
+    const count = item.count;
+    const isHUT = (c.time==='HUT' || c.fine==='HUT');
+    if(isHUT) hut=true; // any HUT triggers HUT label
+    const baseMonths = (c.time==='HUT')? 0 : Number(c.time||0)*(c.result.per?count:1);
+    const baseFine   = (c.fine==='HUT')? 0 : Number(c.fine||0)*(c.result.per?count:1);
+    totalMonths += baseMonths;
+    totalFine   += baseFine;
+    totalPoints += Number(c.points||0)*(c.result.per?count:1);
+    if(c.result.seize) flags.add('Seize');
+  });
+  // apply multipliers
+  let mult = 1.0;
+  activeEnh().forEach(e=>{ mult *= (e.multiplier||1); });
+  totalMonths = Math.round(totalMonths * mult);
+  totalFine   = Math.round(totalFine * mult);
+  totalPoints = Math.round(totalPoints); // points unaffected by multipliers typically
+  // PM +600 per prior serious felony
+  const pm = activeEnh().find(e=>e.code==='P.C. 1110');
+  if(pm && state.pmCount>0){ totalMonths += (pm.extraMonthsPer||0) * state.pmCount; }
+  return {months: totalMonths, fine: totalFine, points: totalPoints, hut, flags: Array.from(flags)};
+}
+
+function calcAndRenderTotals(){
+  const t = calcTotals();
+  $('#sumTime').textContent = t.hut? 'HUT' : months(t.months);
+  $('#sumFine').textContent = currency(t.fine);
+  $('#sumPoints').textContent = String(t.points);
+  $('#sumFlags').innerHTML = (t.flags.length? t.flags.map(f=>`<span class="tag">${f}</span>`).join('') : '<span class="muted">None</span>');
+}
+
+/***** Report *****/
+function buildReport(){
+  const t = calcTotals();
+  const lines = [];
+  if(state.officer) lines.push(`Officer: ${state.officer}`);
+  if(state.suspect) lines.push(`Suspect: ${state.suspect}`);
+  if(state.officer || state.suspect) lines.push('');
+  lines.push('Charges:');
+  state.selected.forEach(item=>{
+    const c = CHARGES.find(x=>x.code===item.code); if(!c) return;
+    const qty = item.count;
+    const per = c.result.per? ` x${qty}` : '';
+    const info = [];
+    info.push(`Time ${months(c.time)}`);
+    info.push(`Fine ${currency(c.fine)}`);
+    if(c.points) info.push(`Points ${c.points}${c.result.per?` x${qty}`:''}`);
+    const flags=[];
+    if(c.result.per) flags.push('Per');
+    if(c.result.seize) flags.push('Seize');
+    lines.push(`- ${c.code} — ${c.name}${per} (${info.join(', ')}${flags.length?`; ${flags.join(' / ')}`:''})`);
+  });
+  if(state.enh.size){
+    lines.push('');
+    lines.push('Enhancements:');
+    activeEnh().forEach(e=>{
+      if(e.code==='P.C. 1110'){
+        lines.push(`- ${e.code} — ${e.name} (x${(e.multiplier||1).toFixed(2)}${state.pmCount?`; +${e.extraMonthsPer} months × ${state.pmCount}`:''})`);
+      } else {
+        lines.push(`- ${e.code} — ${e.name} (x${(e.multiplier||1).toFixed(2)})`);
+      }
+    });
+  }
+  lines.push('');
+  const flagLine = t.flags.length? `Flags: ${t.flags.join(', ')}` : 'Flags: None';
+  const totTime = t.hut? 'HUT' : months(t.months);
+  lines.push(`Total Time: ${totTime}`);
+  lines.push(`Total Fine: ${currency(t.fine)}`);
+  lines.push(`Total Points: ${t.points}`);
+  lines.push(flagLine);
+  $('#report').value = lines.join('\n');
+}
+
+/***** Persistence & URL *****/
+function persist(){
+  const data = {selected:state.selected, enh:Array.from(state.enh), pmCount:state.pmCount, officer:state.officer, suspect:state.suspect};
+  localStorage.setItem('chargeCalc', JSON.stringify(data));
+}
+function load(){
+  const s = localStorage.getItem('chargeCalc');
+  if(s){
+    try{ const d = JSON.parse(s); if(d.selected) state.selected=d.selected; if(d.enh) state.enh=new Set(d.enh); if(Number.isInteger(d.pmCount)) state.pmCount=d.pmCount; state.officer=d.officer||''; state.suspect=d.suspect||''; }catch{}
+  }
+}
+function applyURL(){
+  const p = new URLSearchParams(location.search);
+  const codes = p.get('codes'); // e.g. 304x1,314x2
+  const enh = p.get('enh'); // e.g. 1108,1109
+  const off = p.get('officer');
+  const sus = p.get('suspect');
+  if(off) state.officer = off;
+  if(sus) state.suspect = sus;
+  if(codes){
+    state.selected = [];
+    codes.split(',').forEach(tok=>{
+      const [raw,qty] = tok.split('x');
+      const code = raw.startsWith('P.C.')? raw : `P.C. ${raw}`;
+      const exists = CHARGES.find(c=>c.code===code);
+      if(exists){ state.selected.push({code, count:Math.max(1, parseInt(qty||'1',10))}); }
+    });
+  }
+  if(enh){
+    state.enh = new Set();
+    enh.split(',').forEach(e=>{
+      const code = e.startsWith('P.C.')? e : `P.C. ${e}`;
+      if(ENH.find(x=>x.code===code)) state.enh.add(code);
+    });
+  }
+  const pmc = p.get('pm');
+  if(pmc) state.pmCount = Math.max(0, parseInt(pmc,10)||0);
+}
+function shareLink(){
+  const parts = [];
+  if(state.selected.length){
+    const c = state.selected.map(x=>`${x.code.replace('P.C. ','')}x${x.count}`).join(',');
+    parts.push(`codes=${encodeURIComponent(c)}`);
+  }
+  if(state.enh.size){
+    const e = Array.from(state.enh).map(x=>x.replace('P.C. ',''));
+    parts.push(`enh=${encodeURIComponent(e.join(','))}`);
+  }
+  if(state.pmCount) parts.push(`pm=${state.pmCount}`);
+  if(state.officer) parts.push(`officer=${encodeURIComponent(state.officer)}`);
+  if(state.suspect) parts.push(`suspect=${encodeURIComponent(state.suspect)}`);
+  const url = `${location.origin}${location.pathname}?${parts.join('&')}`;
+  navigator.clipboard.writeText(url).then(()=>{
+    alert('Shareable link copied to clipboard');
+  }).catch(()=>{
+    prompt('Copy link:', url);
+  });
+}
+
+/***** Events *****/
+$('#search').addEventListener('input', renderCatalog);
+$('#copy').addEventListener('click',()=>{ navigator.clipboard.writeText($('#report').value).catch(()=>{}); });
+$('#print').addEventListener('click',()=>{ window.print(); });
+$('#clearAll').addEventListener('click',()=>{ state.selected=[]; state.enh.clear(); state.pmCount=0; persist(); renderSelected(); renderEnh(); });
+$('#shareLink').addEventListener('click', shareLink);
+$('#officer').addEventListener('input',e=>{ state.officer=e.target.value; persist(); buildReport(); });
+$('#suspect').addEventListener('input',e=>{ state.suspect=e.target.value; persist(); buildReport(); });
+
+/***** Init *****/
+load();
+applyURL();
+renderCatalog();
+renderEnh();
+// preload officer/suspect fields
+$('#officer').value = state.officer||'';
+$('#suspect').value = state.suspect||'';
+renderSelected();
+</script>
+</body>
+</html>
