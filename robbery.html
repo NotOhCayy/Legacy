@@ -1,265 +1,310 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SASP — Robbery Report</title>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SASP — Robbery Report (dynamic officers)</title>
 <style>
-:root{ --bg:#0f172a; --panel:#0b1220; --border:#1e293b; --muted:#94a3b8; --text:#e2e8f0; --accent:#2dd4bf;}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
-.header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0b1220,#0a1020)}
-.header img{width:40px;height:40px;border-radius:8px;border:1px solid var(--border);object-fit:contain;background:#0a0f1c}
-.header .title{font-weight:700;font-size:18px}
-.container{max-width:1200px;margin:0 auto;padding:16px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text);cursor:pointer}
-.btn:hover{border-color:#415d7a}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.input,select,textarea{width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text)}
-textarea{min-height:260px;white-space:pre-wrap}
-.small{font-size:12px;color:var(--muted)}
-.layout{display:grid;grid-template-columns:360px 1fr;gap:16px}
-@media (max-width:1000px){.layout{grid-template-columns:1fr}}
-label{font-size:13px}
-hr{border:0;border-top:1px solid var(--border);margin:12px 0}
-h3{margin:12px 0 6px;font-size:14px}
-</style></head>
+  :root{--bg:#0f172a;--panel:#0b1220;--line:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
+  header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);background:#0b1423}
+  header img{width:36px;height:36px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:#0b1220}
+  main{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:420px 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:#cbd5e1}
+  .section{padding:12px}
+  label{display:block;font-size:12px;color:#94a3b8;margin-bottom:6px}
+  select,input,textarea{width:100%;padding:8px 10px;border:1px solid #233044;background:#0b1525;color:var(--text);border-radius:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  textarea{height:330px;white-space:pre-wrap}
+  .btns{display:flex;gap:8px;justify-content:flex-end;padding:10px;border-top:1px solid var(--line);background:#0b1423}
+  button{background:var(--accent);color:#001726;border:1px solid #3fb7eb;border-radius:10px;padding:7px 10px;cursor:pointer}
+  small.hint{color:#7aa2c4;display:block;margin-top:6px}
+</style>
+</head>
 <body>
-<header class="header">
-  <img src="./assets/sasp_badge.png" alt="SASP badge"><div class="title">SASP — Robbery Report</div>
-  <a class="btn" style="margin-left:auto" href="./index.html">Back to Dashboard</a>
+<header>
+  <img src="./assets/sasp_badge.png" alt="SASP">
+  <div>
+    <div style="font-weight:600">SASP — Robbery Report</div>
+    <div style="color:#94a3b8;font-size:12px">Dropdowns now fill the narrative automatically.</div>
+  </div>
 </header>
-<main class="container">
-  <div class="layout">
-    <aside class="card">
-      <label class="small" style="display:block;margin-bottom:4px;">Your Callsign & Name</label>
-      <select id="robOfficerSel" class="input"><option value="">Select callsign — name…</option></select>
+
+<main>
+  <section class="card">
+    <h3>Inputs</h3>
+    <div class="section">
+      <label>Your Callsign & Name</label>
+      <select id="officerSelf"><option value="">— Select officer —</option></select>
 
       <div class="grid2" style="margin-top:8px">
-        <select id="sceneCmd"><option value="">Scene command…</option></select>
-        <select id="negotiator"><option value="">Negotiator…</option></select>
-      </div>
-      <select id="hostageBack" class="input" style="margin-top:8px"><option value="">Who stayed back for hostage…</option></select>
-
-      <h3>Pursuit Order</h3>
-      <div class="grid2"><select id="primary"><option value="">Primary…</option></select><select id="primaryPass"><option value="">Passenger…</option></select></div>
-      <div class="grid2" style="margin-top:6px"><select id="secondary"><option value="">Secondary…</option></select><select id="secondaryPass"><option value="">Passenger…</option></select></div>
-      <div class="grid2" style="margin-top:6px"><select id="tertiary"><option value="">Tertiary…</option></select><select id="tertiaryPass"><option value="">Passenger…</option></select></div>
-      <div class="grid2" style="margin-top:6px"><select id="parallel"><option value="">Parallel…</option></select><select id="parallelPass"><option value="">Passenger…</option></select></div>
-      <div class="grid2" style="margin-top:6px"><input id="bike" class="input" placeholder="Bike-Unit (Optional)" /><input id="air1" class="input" placeholder="Air-1 (Optional)" /></div>
-      <input id="air1Copilot" class="input" placeholder="Co-Pilot (Optional)" style="margin-top:6px" />
-
-      <h3>Robbery</h3>
-      <div role="radiogroup" aria-label="Robbery Type" class="small" style="display:flex;gap:12px;align-items:center">
-        <label><input type="radio" name="robType" value="Jewelry Store"> Jewelry Store</label>
-        <label><input type="radio" name="robType" value="Fleeca Bank"> Fleeca Bank</label>
-        <label><input type="radio" name="robType" value="24/7 Store"> 24/7 Store</label>
-      </div>
-      <select id="whichFleeca" class="input" style="margin-top:6px;display:none">
-        <option value="">Which Fleeca…</option>
-        <option>Legion Square</option><option>Burton</option><option>Rockford Hills (Lifeinvader)</option><option>Alta</option><option>Great Ocean</option><option>Route 68</option><option>Pink Cage</option>
-      </select>
-      <select id="which247" class="input" style="margin-top:6px;display:none">
-        <option value="">Which 24/7…</option>
-        <option>Strawberry 24/7</option><option>Davis LTD 24/7</option><option>Murrieta Heights Rob's Liquor</option><option>Little Seoul LTD 24/7</option><option>Vespucci Canals Rob's Liquor</option><option>Morningwood Rob's Liquor</option><option>Mirror Park LTD 24/7</option><option>Downtown Vinewood 24/7</option><option>Tataviam Mountains 24/7</option><option>Banham Canyon Rob's Liquor</option><option>Banham Canyon 24/7</option><option>Richman Glen LTD 24/7</option><option>Chumash 24/7</option><option>Harmony 24/7</option><option>Grand Senora 24/7</option><option>Grapeseed LTD 24/7</option><option>Mount Chilliad 24/7</option>
-      </select>
-
-      <div class="grid3" style="margin-top:6px">
-        <label>Inside <select id="robInside"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
-        <label>Outside <select id="robOutside"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
-        <label>Hostages <select id="hostages"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+        <div>
+          <label>Scene Command</label>
+          <select id="sceneCmd"><option value="">— Select officer —</option></select>
+          <small class="hint">Appears under [SCENE ASSIGNMENT] → Scene Command</small>
+        </div>
+        <div>
+          <label>Negotiator</label>
+          <select id="negotiator"><option value="">— Select officer —</option></select>
+          <small class="hint">Appears under [SCENE ASSIGNMENT] → Negotiator</small>
+        </div>
       </div>
 
-      <div style="margin-top:6px">
-        <div class="small" style="margin-bottom:4px">Demands</div>
-        <label><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> free passage with no spikes on perimeter</label><br>
-        <label><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> free passage with no spikes on the whole chase</label><br>
-        <label><input type="checkbox" class="demand" value="no helicopter"> no helicopter</label><br>
-        <label><input type="checkbox" class="demand" value="no speed unit"> no speed unit</label><br>
-        <label><input type="checkbox" class="demand" value="no bike unit"> no bike unit</label><br>
-        <input id="demandOther" class="input" placeholder="Other (optional)" />
+      <div style="margin-top:8px">
+        <label>Stayed Back For Hostage</label>
+        <select id="hostageBack"><option value="">— Select officer —</option></select>
+        <small class="hint">Appears under [SCENE ASSIGNMENT] → Stayed Back For Hostage</small>
       </div>
 
-      <h3>Vehicle</h3>
-      <input id="vehDesc" class="input" placeholder="Description" />
-      <div class="grid3" style="margin-top:6px">
-        <input id="vehColor" class="input" placeholder="Color" />
-        <input id="vehPlate" class="input" placeholder="Plate" />
-        <input id="vehRegTo" class="input" placeholder="Registered To" />
+      <h4 style="margin:12px 0 6px;color:#cbd5e1">Pursuit Order</h4>
+      <div class="grid2">
+        <div>
+          <label>Primary</label>
+          <select id="primary"><option value="">— Select officer —</option></select>
+        </div>
+        <div>
+          <label>Passenger</label>
+          <select id="primaryPass"><option value="">— Select officer —</option></select>
+        </div>
       </div>
-
-      <h3>Outcome</h3>
-      <select id="ending" class="input"><option value="">How did the chase end?</option></select>
-      <label style="margin-top:6px;display:block"><input id="caughtOnly" type="checkbox" /> Check this once they have been caught only!</label>
-      <textarea id="endingCustom" class="input" placeholder="Write Custom Ending (optional)" style="margin-top:6px"></textarea>
-
-      <h3>Medical & Processing</h3>
-      <label><input id="medNeeded" type="checkbox"/> Medical attention needed</label>
-      <div class="grid3" style="margin-top:6px">
-        <label>Suspects <select id="medSus"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
-        <label>Police <select id="medCop"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
-        <label>Hospital <select id="hospital"><option>Saint Fiacre</option><option>Mount Zonah</option><option>Sandy Shores Medical</option><option>Paleto Hospital</option><option>Cayo Perico</option></select></label>
-      </div>
-      <label style="margin-top:6px;display:block"><input id="fleeHospital" type="checkbox"/> Attempted to flee at hospital</label>
       <div class="grid2" style="margin-top:6px">
-        <select id="processedAt"><option>MRPD</option><option>Sandy Shores Sheriff's Office</option><option>Davis PD</option><option>Paleto Police Department</option><option>Highway Police Department</option></select>
-        <label style="display:flex;align-items:center;gap:6px"><input id="pleadNC" type="checkbox"/> Plead no contest (optional)</label>
+        <div>
+          <label>Secondary</label>
+          <select id="secondary"><option value="">— Select officer —</option></select>
+        </div>
+        <div>
+          <label>Passenger</label>
+          <select id="secondaryPass"><option value="">— Select officer —</option></select>
+        </div>
       </div>
-    </aside>
-    <section class="card">
-      <textarea id="robReport" class="input" placeholder="The report will appear here as you fill the form…"></textarea>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-        <button id="robShare" class="btn">Share prefilled link</button>
-        <button id="robCopy" class="btn">Copy</button>
-        <button id="robPrint" class="btn">Print</button>
+      <div class="grid2" style="margin-top:6px">
+        <div>
+          <label>Tertiary</label>
+          <select id="tertiary"><option value="">— Select officer —</option></select>
+        </div>
+        <div>
+          <label>Passenger</label>
+          <select id="tertiaryPass"><option value="">— Select officer —</option></select>
+        </div>
       </div>
-    </section>
-  </div>
+      <div class="grid2" style="margin-top:6px">
+        <div>
+          <label>Parallel</label>
+          <select id="parallel"><option value="">— Select officer —</option></select>
+        </div>
+        <div>
+          <label>Passenger</label>
+          <select id="parallelPass"><option value="">— Select officer —</option></select>
+        </div>
+      </div>
+
+      <h4 style="margin:12px 0 6px;color:#cbd5e1">Robbery</h4>
+      <div>
+        <label>Type</label>
+        <div style="display:flex;gap:10px;color:#cbd5e1">
+          <label><input type="radio" name="robType" value="Jewelry Store"> Jewelry Store</label>
+          <label><input type="radio" name="robType" value="Fleeca Bank"> Fleeca Bank</label>
+          <label><input type="radio" name="robType" value="24/7 Store"> 24/7 Store</label>
+        </div>
+      </div>
+      <select id="whichFleeca" style="margin-top:6px;display:none">
+        <option value="">Which Fleeca…</option>
+        <option>Legion Square</option><option>Burton</option><option>Rockford Hills (Lifeinvader)</option>
+        <option>Alta</option><option>Great Ocean</option><option>Route 68</option><option>Pink Cage</option>
+      </select>
+      <select id="which247" style="margin-top:6px;display:none">
+        <option value="">Which 24/7…</option>
+        <option>Strawberry 24/7</option><option>Davis LTD 24/7</option><option>Murrieta Heights Rob's Liquor</option>
+        <option>Little Seoul LTD 24/7</option><option>Vespucci Canals Rob's Liquor</option><option>Morningwood Rob's Liquor</option>
+        <option>Mirror Park LTD 24/7</option><option>Downtown Vinewood 24/7</option><option>Tataviam Mountains 24/7</option>
+        <option>Banham Canyon Rob's Liquor</option><option>Banham Canyon 24/7</option><option>Richman Glen LTD 24/7</option>
+        <option>Chumash 24/7</option><option>Harmony 24/7</option><option>Grand Senora 24/7</option>
+        <option>Grapeseed LTD 24/7</option><option>Mount Chilliad 24/7</option>
+      </select>
+
+      <div class="grid3" style="margin-top:8px">
+        <div><label>Inside</label><select id="robInside"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+        <div><label>Outside</label><select id="robOutside"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+        <div><label>Hostages</label><select id="hostages"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Demands</label>
+        <label><input type="checkbox" class="demand" value="free passage with no spikes on perimeter"> free passage with no spikes on perimeter</label>
+        <label><input type="checkbox" class="demand" value="free passage with no spikes on the whole chase"> free passage with no spikes on the whole chase</label>
+        <label><input type="checkbox" class="demand" value="no helicopter"> no helicopter</label>
+        <label><input type="checkbox" class="demand" value="no speed unit"> no speed unit</label>
+        <label><input type="checkbox" class="demand" value="no bike unit"> no bike unit</label>
+        <input id="demandOther" placeholder="Other (optional)" style="margin-top:6px"/>
+      </div>
+
+      <h4 style="margin:12px 0 6px;color:#cbd5e1">Vehicle</h4>
+      <input id="vehDesc" placeholder="Description (e.g., Black Sultan RS)"/>
+      <div class="grid3" style="margin-top:6px">
+        <input id="vehColor" placeholder="Color"/>
+        <input id="vehPlate" placeholder="Plate"/>
+        <input id="vehRegTo" placeholder="Registered To"/>
+      </div>
+
+      <h4 style="margin:12px 0 6px;color:#cbd5e1">Ending</h4>
+      <select id="ending">
+        <option value="">— Select how it ended —</option>
+        <option>Suspects declared Code Red</option>
+        <option>Vehicle boxed in | Ran on foot | Caught</option>
+        <option>Vehicle disabled | Ran on foot | Escaped</option>
+        <option>Vehicle swap x1 | Caught</option>
+        <option>Bike disabled | Surrendered</option>
+      </select>
+      <input id="endingCustom" placeholder="Custom ending (optional)" style="margin-top:6px"/>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Narrative</h3>
+    <div class="section">
+      <textarea id="out" spellcheck="false" placeholder="Report will generate here…"></textarea>
+    </div>
+    <div class="btns">
+      <button id="btnCopy">Copy</button>
+      <button id="btnPrint">Print</button>
+    </div>
+  </section>
 </main>
 
 <script>
-// Officers list (same as before)
-const OFFICERS=[
-  {cs:'X-100',name:'Curtis Roscoe'},{cs:'X-101',name:'Alexander Murphy'},
-  {cs:'A-110',name:'Maya Serrano'},{cs:'A-111',name:'Max Callahan'},{cs:'A-112',name:'Alexandr Nolan'},{cs:'A-115',name:'Pepper Belle'},{cs:'A-118',name:'Oscar Deacon'},
-  {cs:'C-123',name:'Hayley Cassidy'},{cs:'C-134',name:'Jason Brennon'},
-  {cs:'LT-129',name:'Quintin Johnson'},{cs:'LT-141',name:'Valentina Reyes'},{cs:'LT-151',name:'Hamidi Aziz'},{cs:'LT-153',name:'Joseph Dredd'},{cs:'LT-162',name:'John Shepard'},{cs:'LT-169',name:'Frank Hoight'},{cs:'LT-180',name:'Nora Cipriano'},
-  {cs:'S-201',name:'Alexander Cappella'},{cs:'S-202',name:'Justin North'},{cs:'S-203',name:'Max Harris'},{cs:'S-204',name:'Faye Howell'},{cs:'S-205',name:'Timothy Martinez Jr'},{cs:'S-206',name:'Louie Herrett'},{cs:'S-207',name:'Romeo Vanderford'},{cs:'S-218',name:'Ben Asher'},{cs:'S-220',name:'Wes North'},{cs:'S-227',name:'Lando Doe'},{cs:'S-229',name:'Neon Cash'},{cs:'S-239',name:'Dawid Odison'},{cs:'S-255',name:"Brian O’connor II"},
-  {cs:'CO-301',name:'Saylor Ray'},{cs:'CO-303',name:'Jason Wescott'},{cs:'CO-305',name:'Julius Barry'},{cs:'CO-309',name:'Eddie Irwin'},{cs:'CO-310',name:'Belle French'},{cs:'CO-311',name:'Jay Walken'},{cs:'CO-312',name:'Timmy Hunter'},{cs:'CO-313',name:'Doug Grayves'},{cs:'CO-320',name:'Bo Stabler'},{cs:'CO-321',name:'Travis Brewer'},{cs:'CO-331',name:'Enzo Knight'},{cs:'CO-333',name:'Del Powers'},{cs:'CO-350',name:'Stevo Mayte'},{cs:'CO-360',name:'Matthew Ramirez'},{cs:'CO-369',name:'James Middleton'},{cs:'CO-383',name:'Skeeter Woodhouse'},{cs:'CO-395',name:'Ronny Roman'},
-  {cs:'SO-401',name:'Finley Maximoff'},{cs:'SO-402',name:'Jerry Ward'},{cs:'SO-404',name:'Joseph Randy'},{cs:'SO-405',name:'Sebastian Collinsworth'},{cs:'SO-406',name:'Ricky Mathers'},{cs:'SO-407',name:'Sonny Sullivan'},{cs:'SO-408',name:'Albus Davies'},{cs:'SO-410',name:'Clint Morris'},{cs:'SO-411',name:'Scarlett Rain'},{cs:'SO-412',name:'Steven Wet'},{cs:'SO-413',name:'Ralph Garza'},{cs:'SO-414',name:'Aezlyn Soria'},{cs:'SO-416',name:'Austin Crockett'},{cs:'SO-419',name:'Kaleb Axel'},{cs:'SO-420',name:'Juniper Rowan'},{cs:'SO-429',name:'Dale Shields'},{cs:'SO-440',name:'Dempsey Watson'},{cs:'SO-443',name:'Street Frost'},{cs:'SO-444',name:'Adam Ahmed'},{cs:'SO-450',name:'Ava Valentine'},{cs:'SO-459',name:'Jimmy Hoxton'},{cs:'SO-469',name:'Jimmy Boudreaux'},{cs:'SO-485',name:'Ralph Lawrence'},{cs:'SO-488',name:'Marc Chevy'},{cs:'SO-497',name:'Michigan Silver'},{cs:'SO-498',name:'Jeremie Rodriguez Valentine'},
-  {cs:'O-501',name:'Casey Leclair'},{cs:'O-505',name:'Justin Bleacher'},{cs:'O-507',name:'Phil Eldwood'},{cs:'O-509',name:'Jacob Page'},{cs:'O-510',name:'Tommy Thibodeaux'},{cs:'O-511',name:'Eevee Hunter'},{cs:'O-520',name:'Lela Law'},{cs:'O-521',name:'Aileen Callahan'},{cs:'O-525',name:'Davie Smith'},{cs:'O-530',name:'Aurora Bordeaux'},{cs:'O-542',name:'Fredrick Oxmall'},{cs:'O-545',name:'Michael Price'},{cs:'O-550',name:'Lexie Rivers'},{cs:'O-555',name:'Peter Dinklage'},{cs:'O-559',name:'Misty Meanor'},
-  {cs:'PO-601',name:'Tommy Redwood'},{cs:'PO-612',name:'Anakin Skywalker'},{cs:'PO-616',name:'Derrick Stones'},{cs:'PO-617',name:'Peach Cobbler'},{cs:'PO-627',name:'Lily Cappella-beltz'},{cs:'PO-660',name:'Elliot Grayson'},{cs:'PO-666',name:'Benson Drake'},{cs:'PO-669',name:'Kendrick Carter'},{cs:'PO-670',name:'Ryan Gonzalez'},{cs:'PO-677',name:'Eric Gunter'},{cs:'PO-687',name:'Lewis Gallagher'}
-];
-const NAME_OPT=(o)=>`${o.cs} — ${o.name}`;
-function populateCallsignSelect(sel){ if(!sel) return; sel.innerHTML='<option value="">Select callsign — name…</option>'; OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=o.cs; opt.textContent=NAME_OPT(o); sel.appendChild(opt);}); }
-function populateNameSelect(sel){ if(!sel) return; sel.innerHTML=`<option value="">— Select —</option>`; OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=NAME_OPT(o); opt.textContent=NAME_OPT(o); sel.appendChild(opt);}); }
+// Fetch officers from shared asset file
+let OFFICERS = [];
+function nameFmt(o){ return `${o.cs} — ${o.name}`; }
 
-const RF=JSON.parse(localStorage.getItem('robbery_v2')||'{}');
-function persistRF(){ localStorage.setItem('robbery_v2',JSON.stringify(RF)); }
-
-function fillOfficerSelect(selId){
-  const sel=document.querySelector(selId);
-  populateCallsignSelect(sel);
-  if(RF.officerCS) sel.value=RF.officerCS;
-  sel.onchange=()=>{
-    const o=OFFICERS.find(x=>x.cs===sel.value);
-    if(!o) return;
-    RF.officerCS=o.cs;
-    RF.officer=`${o.cs} — ${o.name}`;
-    persistRF(); buildRF();
-  };
-}
-
-function populatePursuitDropdowns(){
-  ['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass']
-    .forEach(id=>populateNameSelect(document.getElementById(id)));
-  ['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass']
-    .forEach(id=>{
-      const el=document.getElementById(id);
-      if(RF[id]) el.value=RF[id];
-      el.addEventListener('change',ev=>{ RF[id]=ev.target.value; persistRF(); buildRF();});
-    });
-}
-
-function toggleWhich(){ const f=document.getElementById('whichFleeca'), s=document.getElementById('which247'); f.style.display=(RF.robType==='Fleeca Bank')?'block':'none'; s.style.display=(RF.robType==='24/7 Store')?'block':'none'; }
-function initRobType(){
-  if(RF.robType){ const r=Array.from(document.getElementsByName('robType')).find(x=>x.value===RF.robType); if(r) r.checked=true; }
-  Array.from(document.getElementsByName('robType')).forEach(r=>r.addEventListener('change',()=>{ RF.robType=r.value; persistRF(); toggleWhich(); buildRF(); }));
-}
-
-function bindRF(){
-  function bindSel(id){ const el=document.querySelector(id); if(!el) return; if(RF[id.slice(1)]) el.value=RF[id.slice(1)]; el.addEventListener('change',ev=>{ RF[id.slice(1)]=ev.target.value; persistRF(); buildRF();}); }
-  function bindTxt(id){ const el=document.querySelector(id); if(!el) return; el.value=RF[id.slice(1)]||''; el.addEventListener('input',ev=>{ RF[id.slice(1)]=ev.target.value; persistRF(); buildRF();}); }
-  function bindChk(id){ const el=document.querySelector(id); if(!el) return; el.checked=!!RF[id.slice(1)]; el.addEventListener('change',()=>{ RF[id.slice(1)]=el.checked; persistRF(); buildRF();}); }
-  ['#robInside','#robOutside','#hostages','#processedAt','#hospital','#ending'].forEach(bindSel);
-  ['#bike','#air1','#air1Copilot','#demandOther','#vehDesc','#vehColor','#vehPlate','#vehRegTo','#endingCustom'].forEach(bindTxt);
-  ['#caughtOnly','#medNeeded','#fleeHospital','#pleadNC'].forEach(bindChk);
-  Array.from(document.querySelectorAll('.demand')).forEach(cb=>{
-    cb.checked=(RF.demands||[]).includes(cb.value);
-    cb.addEventListener('change',()=>{ const set=new Set(RF.demands||[]); if(cb.checked) set.add(cb.value); else set.delete(cb.value); RF.demands=[...set]; persistRF(); buildRF();});
+function populateSel(sel){
+  sel.innerHTML = '<option value=\"\">— Select officer —</option>';
+  OFFICERS.forEach(o=>{
+    const opt=document.createElement('option');
+    opt.value=nameFmt(o);
+    opt.textContent=nameFmt(o);
+    sel.appendChild(opt);
   });
 }
 
-const ENDINGS=[ 'Units lost eyes | Escaped','Suspects caught | General Ending','Surrendered | General Ending','Got out of vehicle | Ran on foot | Caught','Got out of vehicle | Ran on foot | Escaped','Vehicle disabled | Ran on foot | Caught','Vehicle disabled | Ran on foot | Escaped','Vehicle disabled | Vehicle swap | Caught','Vehicle disabled | Vehicle swap | Escaped','Vehicle disabled | Surrendered','Vehicle Tires Popped | Ran on foot | Caught','Vehicle Tires Popped | Ran on foot | Escaped','Vehicle Tires Popped | Surrendered','Vehicle boxed in | Ran on foot | Caught','Vehicle boxed in | Ran on foot | Escaped','Vehicle boxed in | Surrendered','Attempted Vehicle swap | Caught','Vehicle swap x1 | Caught','Vehicle swap x1 | Escaped','Vehicle swap x2 | Caught','Vehicle swap x2 | Escaped','Vehicle swap x3 | Caught','Vehicle swap x3 | Escaped','Bike swap | Caught','Bike swap | Escaped','Vehicle ran out of fuel | Ran on foot | Transfer vehicle | Caught','Vehicle ran out of fuel | Ran on foot | Transfer vehicle | Escaped','Vehicle ran out of fuel | Ran on foot | Caught','Vehicle ran out of fuel | Ran on foot | Escaped','Vehicle ran out of fuel | Surrendered','Vehicle turtled | Ran on foot | Transfer vehicle | Caught','Vehicle turtled | Ran on foot | Transfer vehicle | Escaped','Vehicle turtled | Ran on foot | Caught','Vehicle turtled | Ran on foot | Escaped','Vehicle turtled | Surrendered','Vehicle Stuck | Ran on foot | Caught','Vehicle Stuck | Ran on foot | Escaped','Vehicle Stuck | Surrendered','Vehicle was sent into water | Caught','Vehicle was sent into water | Escaped','Vehicle blew up','Vehicle took a jump | Escaped','Suspects opened fire from the vehicle | Caught','Suspects opened fire from the vehicle | Escaped','Turned into a shootout | All Caught','Turned into a shootout | All Escaped','Secondary Vehicle Blocked Units | Escaped','Vehicle 10-50 | Suspects went down','Bike disabled | Ran on foot | Caught','Bike disabled | Ran on foot | Escaped','Bike disabled | Surrendered','Fell off bike | Ran on foot | Caught','Fell off bike | Ran on foot | Escaped','Fell off bike | Vehicle Swap | Caught','Fell off bike | Vehicle Swap | Escaped','Fell off bike | Surrendered','Suspects declared Code Red' ];
-
-function sentenceDemands(){
-  const ds=[...(RF.demands||[])];
-  if(RF.demandOther && RF.demandOther.trim()) ds.push(RF.demandOther.trim());
-  if(!ds.length) return 'No specific demands were made.';
-  return 'The suspect(s) demanded ' + ds.join(', ') + '.';
+function loadOfficers(){
+  fetch('./assets/officers.json')
+    .then(r=>r.json())
+    .then(list=>{ OFFICERS=list; init(); })
+    .catch(()=>{ console.warn('Could not load officers.json'); init(); }); // still init to avoid blank UI
 }
 
-function buildRF(){
-  const officer = RF.officer || '[Insert Callsign]';
-  const sc = RF.sceneCmd || '[Insert Officer]';
-  const neg = RF.negotiator || '[Insert Officer]';
-  const stay = RF.hostageBack || '[Insert Officer]';
-  const robType = RF.robType || '[Select Robbery Type]';
-  const whichF = RF.whichFleeca ? ` at ${RF.whichFleeca}` : (RF.robType==='Fleeca Bank' ? ' at **enter bank name**' : '');
-  const which247 = RF.which247 ? ` at ${RF.which247}` : (RF.robType==='24/7 Store' ? ' at **enter store name**' : '');
-  const inside = RF.robInside || '—';
-  const outside = RF.robOutside || '—';
-  const host = RF.hostages || '—';
+const S = id => document.getElementById(id);
 
-  const primary = RF.primary || '—';
-  const primaryP = RF.primaryPass ? ` | Passenger: ${RF.primaryPass}` : '';
-  const secondary = RF.secondary || '—';
-  const secondaryP = RF.secondaryPass ? ` | Passenger: ${RF.secondaryPass}` : '';
-  const tertiary = RF.tertiary || '—';
-  const tertiaryP = RF.tertiaryPass ? ` | Passenger: ${RF.tertiaryPass}` : '';
-  const parallel = RF.parallel || '—';
-  const parallelP = RF.parallelPass ? ` | Passenger: ${RF.parallelPass}` : '';
+const RF = {}; // state
 
-  const vehLine = (()=>{
-    const bits=[];
-    if(RF.vehDesc) bits.push(`a ${RF.vehDesc}`);
-    if(RF.vehColor) bits.push(`(${RF.vehColor})`);
-    if(RF.vehPlate) bits.push(`plate ${RF.vehPlate}`);
-    if(RF.vehRegTo) bits.push(`registered to ${RF.vehRegTo}`);
-    return bits.length? bits.join(' ') : 'an unknown vehicle';
-  })();
-
-  const med = RF.medNeeded ? 'Medical attention was required.' : 'No medical attention was required.';
-  const medBreakdown = `Suspects: ${RF.medSus||0} | Police: ${RF.medCop||0} | Hospital: ${RF.hospital||'—'}` + (RF.fleeHospital? ' | Attempted to flee at hospital.':'');
-  const processed = RF.processedAt ? `Processed at ${RF.processedAt}.` : 'Processing location not set.' + (RF.pleadNC?' | Plead no contest.':'');
-
-  const endingLine = (RF.endingCustom && RF.endingCustom.trim()) ? RF.endingCustom.trim() : (RF.ending || '');
-
-  const lines = [];
-  lines.push(`[REPORTING OFFICER]:\n${officer}`);
-  lines.push(`\n[SCENE ASSIGNMENT]:\nScene Command: ${sc}\nNegotiator: ${neg}\nStayed Back For Hostage: ${stay}`);
-  lines.push(`\n[INVOLVED IN PURSUIT]:\nPrimary: ${primary}${primaryP}\nSecondary: ${secondary}${secondaryP}\nTertiary: ${tertiary}${tertiaryP}\nParallel: ${parallel}${parallelP}`);
-  lines.push(`\n[DETAILS | DEMANDS]:\nDuring patrol, units were dispatched to a reported alarm at the ${robType}${whichF}${which247}. Scene command set the perimeter and negotiations began. We confirmed a total of:\nRobbers Inside: ${inside}\nRobbers Outside: ${outside}\nHostages: ${host}\n\n${sentenceDemands()}`);
-  lines.push(`\n[VEHICLE | CHASE]:\nThe suspects left in ${vehLine}. ${endingLine || 'The chase narrative goes here…'}${RF.caughtOnly ? '\n\n(Checked when suspects have been caught.)' : ''}`);
-  lines.push(`\n[MEDICAL | PROCESSING]:\n${med}\n${medBreakdown}\n${processed}`);
-
-  document.getElementById('robReport').value = lines.join('\n');
+function bindSelect(id){
+  const el=S(id);
+  el.addEventListener('change',()=>{ RF[id]=el.value; build(); });
+  populateSel(el);
+}
+function bindInput(id){
+  const el=S(id);
+  el.addEventListener('input',()=>{ RF[id]=el.value; build(); });
+}
+function bindRadio(){
+  document.querySelectorAll('input[name=robType]').forEach(r=>{
+    r.addEventListener('change',()=>{
+      RF.robType=r.value;
+      S('whichFleeca').style.display = RF.robType==='Fleeca Bank' ? 'block':'none';
+      S('which247').style.display   = RF.robType==='24/7 Store' ? 'block':'none';
+      build();
+    });
+  });
+  ['whichFleeca','which247','robInside','robOutside','hostages','ending'].forEach(id=>{
+    S(id).addEventListener('change',()=>{ RF[id]=S(id).value; build();});
+  });
+  S('endingCustom').addEventListener('input',()=>{ RF.endingCustom=S('endingCustom').value; build();});
+  S('demandOther').addEventListener('input',()=>{ RF.demandOther=S('demandOther').value; build();});
+  document.querySelectorAll('.demand').forEach(cb=>{
+    cb.addEventListener('change',()=>{ build();});
+  });
 }
 
 function init(){
-  populateCallsignSelect(document.getElementById('robOfficerSel'));
-  fillOfficerSelect('#robOfficerSel');
-  populatePursuitDropdowns();
-  const e=document.getElementById('ending');
-  ENDINGS.forEach(x=>{ const opt=document.createElement('option'); opt.textContent=x; e.appendChild(opt);});
-  if(RF.ending) e.value=RF.ending;
-  e.onchange=()=>{ RF.ending=e.value; persistRF(); buildRF(); };
-  initRobType(); toggleWhich(); bindRF(); buildRF();
-  document.getElementById('robCopy').addEventListener('click',()=>navigator.clipboard.writeText(document.getElementById('robReport').value).catch(()=>{}));
-  document.getElementById('robPrint').addEventListener('click',()=>window.print());
-  document.getElementById('robShare').addEventListener('click',()=>{
-    const parts=[]; const enc=v=>encodeURIComponent(v);
-    if(RF.officerCS) parts.push(`officerCS=${enc(RF.officerCS)}`); else if(RF.officer) parts.push(`officer=${enc(RF.officer)}`);
-    const map=['sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass','bike','air1','air1Copilot','robType','whichFleeca','which247','robInside','robOutside','hostages','demandOther','vehDesc','vehColor','vehPlate','vehRegTo','ending','endingCustom','processedAt'];
-    map.forEach(k=>{ if(RF[k]) parts.push(`${k}=${enc(RF[k])}`); });
-    if(RF.caughtOnly) parts.push('caughtOnly=1');
-    if(RF.medNeeded) parts.push('medNeeded=1');
-    if(RF.fleeHospital) parts.push('fleeHospital=1');
-    if(RF.pleadNC) parts.push('pleadNC=1');
-    if((RF.demands||[]).length) parts.push(`demands=${enc((RF.demands||[]).join('|'))}`);
-    const url=`${location.origin}${location.pathname}?${parts.join('&')}#rob`;
-    navigator.clipboard.writeText(url).then(()=>alert('Shareable link copied')).catch(()=>prompt('Copy link:',url));
-  });
+  // main officer dropdowns
+  ['officerSelf','sceneCmd','negotiator','hostageBack','primary','primaryPass','secondary','secondaryPass','tertiary','tertiaryPass','parallel','parallelPass']
+    .forEach(bindSelect);
+
+  // other inputs
+  ['vehDesc','vehColor','vehPlate','vehRegTo'].forEach(bindInput);
+  bindRadio();
+  build();
 }
-init();
+
+function build(){
+  const sel = id => RF[id]||'';
+  const robType = RF.robType||'';
+  const which = robType==='Fleeca Bank' ? (RF.whichFleeca||'**Enter bank name here**')
+              : robType==='24/7 Store' ? (RF.which247||'**Enter store name here**')
+              : '';
+  const demands = [...document.querySelectorAll('.demand:checked')].map(cb=>cb.value);
+  if(RF.demandOther) demands.push(RF.demandOther);
+
+  const involved = [];
+  if(sel('primary')||sel('primaryPass'))  involved.push(`Primary: ${sel('primary')||'—'}${sel('primaryPass')?`  |  Passenger: ${sel('primaryPass')}`:''}`);
+  if(sel('secondary')||sel('secondaryPass'))involved.push(`Secondary: ${sel('secondary')||'—'}${sel('secondaryPass')?`  |  Passenger: ${sel('secondaryPass')}`:''}`);
+  if(sel('tertiary')||sel('tertiaryPass'))  involved.push(`Tertiary: ${sel('tertiary')||'—'}${sel('tertiaryPass')?`  |  Passenger: ${sel('tertiaryPass')}`:''}`);
+  if(sel('parallel')||sel('parallelPass'))  involved.push(`Parallel: ${sel('parallel')||'—'}${sel('parallelPass')?`  |  Passenger: ${sel('parallelPass')}`:''}`);
+
+  const endingLine = (sel('endingCustom')||sel('ending'));
+
+  const lines = [];
+  if(sel('officerSelf')){
+    lines.push('[REPORTING OFFICER]:');
+    lines.push(sel('officerSelf'));
+    lines.push('');
+  }
+  lines.push('[SCENE ASSIGNMENT]:');
+  lines.push(`Scene Command: ${sel('sceneCmd')||'[Insert Officer]'}`);
+  lines.push(`Negotiator: ${sel('negotiator')||'[Insert Officer]'}`);
+  lines.push(`Stayed Back For Hostage: ${sel('hostageBack')||'[Insert Officer]'}`);
+  lines.push('');
+
+  if(involved.length){
+    lines.push('[INVOLVED IN PURSUIT]:');
+    involved.forEach(x=>lines.push(x));
+    lines.push('');
+  }
+
+  if(robType){
+    lines.push('[DETAILS | DEMANDS]:');
+    lines.push(`Robbery Type: ${robType}${which?`  |  ${robType==='Fleeca Bank'?'Which Fleeca':'Which 24/7'}: ${which}`:''}`);
+    lines.push(`Robbers Inside: ${sel('robInside')||'—'}`);
+    lines.push(`Robbers Outside: ${sel('robOutside')||'—'}`);
+    lines.push(`Hostages: ${sel('hostages')||'—'}`);
+    if(demands.length){
+      lines.push('Demands:');
+      demands.forEach(d=>lines.push(`- ${d}`));
+    }
+    lines.push('');
+  }
+
+  if(sel('vehDesc')||sel('vehColor')||sel('vehPlate')||sel('vehRegTo')||endingLine){
+    lines.push('[VEHICLE | CHASE]:');
+    if(sel('vehDesc'))  lines.push(`- Description: ${sel('vehDesc')}`);
+    if(sel('vehColor')) lines.push(`- Color: ${sel('vehColor')}`);
+    if(sel('vehPlate')) lines.push(`- Plate: ${sel('vehPlate')}`);
+    if(sel('vehRegTo'))lines.push(`- Registered To: ${sel('vehRegTo')}`);
+    if(endingLine) lines.push(`- Ending: ${endingLine}`);
+    lines.push('');
+  }
+
+  S('out').value = lines.join('\n');
+}
+
+document.getElementById('btnCopy').addEventListener('click',()=>{
+  navigator.clipboard.writeText(S('out').value).catch(()=>{});
+});
+document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+
+loadOfficers();
 </script>
-</body></html>
+</body>
+</html>
