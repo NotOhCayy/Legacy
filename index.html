@@ -1,1 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SASP Tools — Dashboard</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#0b1220; --border:#1e293b; --muted:#94a3b8;
+  --text:#e2e8f0; --accent:#38bdf8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0b1220,#0a1020)}
+.header img{width:36px;height:36px;border-radius:6px;border:1px solid var(--border)}
+.header .title{font-weight:700}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text);cursor:pointer}
+.btn:hover{border-color:#2e415b}
+.btn-primary{background:var(--accent);color:#05121a;border-color:#2aa4db}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.input, select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#0c162a;color:var(--text)}
+textarea{min-height:220px;white-space:pre-wrap}
+.small{font-size:12px;color:var(--muted)}
+.footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}
+hr{border:0;border-top:1px solid var(--border);margin:12px 0}
+.badge{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;background:#0c162a;color:var(--muted);font-size:11px}
 
+.home{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:16px}
+.home .tool{padding:18px}
+.home h3{margin:0 0 8px}
+.home p{margin:0 0 12px;color:var(--muted)}
+</style></head>
+<body>
+<header class="header">
+  <img src="./assets/sasp_badge.png" alt="SASP badge"><div class="title">SASP — Tools</div>
+  <div style="margin-left:auto"><span class="badge">Dashboard</span></div>
+</header>
+<main class="container">
+  <div class="card">
+    <div class="home">
+      <div class="tool card">
+        <h3>Incident Charge Calculator</h3>
+        <p>Search charges, add counts, apply enhancements, and generate a clean report.</p>
+        <a class="btn btn-primary" href="./calculator.html">Open Calculator</a>
+      </div>
+      <div class="tool card">
+        <h3>Robbery Incident Report</h3>
+        <p>Fill fast with dropdown officer names, pursuit order, robbery type, and outcomes.</p>
+        <a class="btn btn-primary" href="./robbery.html">Open Robbery Report</a>
+      </div>
+    </div>
+    <div class="footer">Created by Maya Serrano | SASP Command</div>
+  </div>
+</main>
+</body></html>
