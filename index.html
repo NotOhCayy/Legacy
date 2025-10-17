@@ -121,10 +121,10 @@
           <input id="robOfficer" type="text" placeholder="Your Callsign & Name (editable)" />
         </div>
         <div class="grid2" style="margin-top:8px">
-          <input id="sceneCmd" type="text" placeholder="Scene command" />
-          <input id="negotiator" type="text" placeholder="Negotiator" />
+          <select id="sceneCmd"><option value="">Scene command…</option></select>
+          <select id="negotiator"><option value="">Negotiator…</option></select>
         </div>
-        <input id="hostageBack" type="text" placeholder="Who stayed back for hostage" style="margin-top:8px" />
+        <select id="hostageBack" style="margin-top:8px"><option value="">Who stayed back for hostage…</option></select>
 
         <h3 style="margin:14px 0 6px">Pursuit Order</h3>
         <div class="grid2"><input id="primary" placeholder="Primary" /><input id="primaryPass" placeholder="Passenger" /></div>
@@ -296,8 +296,8 @@ function bindRF(){
   function bindChk(id,key){const el=$q(id); if(!el) return; el.checked=!!RF_STATE[key]; el.addEventListener('change',()=>{RF_STATE[key]=el.checked; persistRF(); buildRF();});}
 
   bind('#robOfficer','officer');
-  ['#sceneCmd','#negotiator','#hostageBack','#primary','#primaryPass','#secondary','#secondaryPass','#tertiary','#tertiaryPass','#parallel','#parallelPass','#bike','#air1','#air1Copilot','#demandOther','#vehDesc','#vehColor','#vehPlate','#vehRegTo','#endingCustom'].forEach(id=>bind(id,id.slice(1)));
-  ['#robInside','#robOutside','#hostages','#processedAt','#hospital','#ending'].forEach(id=>bindSel(id,id.slice(1)));
+  ['#primary','#primaryPass','#secondary','#secondaryPass','#tertiary','#tertiaryPass','#parallel','#parallelPass','#bike','#air1','#air1Copilot','#demandOther','#vehDesc','#vehColor','#vehPlate','#vehRegTo','#endingCustom'].forEach(id=>bind(id,id.slice(1)));
+  ['#sceneCmd','#negotiator','#hostageBack','#robInside','#robOutside','#hostages','#processedAt','#hospital','#ending'].forEach(id=>bindSel(id,id.slice(1)));
   ['#caughtOnly','#medNeeded','#fleeHospital','#pleadNC'].forEach(id=>bindChk(id,id.slice(1)));
   // Demands
   $$q('.demand').forEach(cb=>{cb.checked=(RF_STATE.demands||[]).includes(cb.value); cb.addEventListener('change',()=>{const set=new Set(RF_STATE.demands||[]); if(cb.checked) set.add(cb.value); else set.delete(cb.value); RF_STATE.demands=[...set]; persistRF(); buildRF();});});
@@ -310,7 +310,85 @@ function initRobType(){if(RF_STATE.robType){const r=[...document.getElementsByNa
 
 function persistRF(){localStorage.setItem('robbery_v2',JSON.stringify(RF_STATE));}
 
-function buildRF(){const lines=[]; if(RF_STATE.officer) lines.push(`Your Callsign & Name: ${RF_STATE.officer}`);
+function buildRF(){
+  const lines=[];
+  if(RF_STATE.officer) lines.push(`Your Callsign & Name: ${RF_STATE.officer}`);
+  if(RF_STATE.sceneCmd||RF_STATE.negotiator||RF_STATE.hostageBack){
+    lines.push('');
+    lines.push('Assignment:');
+    if(RF_STATE.sceneCmd) lines.push(`- Scene command: ${RF_STATE.sceneCmd}`);
+    if(RF_STATE.negotiator) lines.push(`- Negotiator: ${RF_STATE.negotiator}`);
+    if(RF_STATE.hostageBack) lines.push(`- Who stayed back for hostage: ${RF_STATE.hostageBack}`);
+  }
+  const purs=[
+    ['Primary',RF_STATE.primary,RF_STATE.primaryPass],
+    ['Secondary',RF_STATE.secondary,RF_STATE.secondaryPass],
+    ['Tertiary',RF_STATE.tertiary,RF_STATE.tertiaryPass],
+    ['Parallel',RF_STATE.parallel,RF_STATE.parallelPass]
+  ];
+  const extras=[['Bike-Unit',RF_STATE.bike],['Air-1',RF_STATE.air1],['Co-Pilot',RF_STATE.air1Copilot]];
+  if(purs.some(x=>x[1]||x[2])||extras.some(x=>x[1])){
+    lines.push('');
+    lines.push('Pursuit Order:');
+    purs.forEach(([l,u,p])=>{ if(u||p) lines.push(`${l}: ${u||'—'}${p?`  |  Passenger: ${p}`:''}`);});
+    if(RF_STATE.bike) lines.push(`Bike-Unit (Optional): ${RF_STATE.bike}`);
+    if(RF_STATE.air1) lines.push(`Air-1 (Optional): ${RF_STATE.air1}`);
+    if(RF_STATE.air1Copilot) lines.push(`Co-Pilot (Optional): ${RF_STATE.air1Copilot}`);
+  }
+  if(RF_STATE.robType){
+    lines.push('');
+    lines.push(`Robbery Type: ${RF_STATE.robType}`);
+    if(RF_STATE.robType==='Fleeca Bank'){
+      if(RF_STATE.whichFleeca) lines.push(`Which Fleeca: ${RF_STATE.whichFleeca}`); else lines.push('Which Fleeca: **Enter bank name here**');
+    }
+    if(RF_STATE.robType==='24/7 Store'){
+      if(RF_STATE.which247) lines.push(`Which 24/7: ${RF_STATE.which247}`); else lines.push('Which 24/7: **Enter store name here**');
+    }
+  }
+  if(RF_STATE.robInside||RF_STATE.robOutside||RF_STATE.hostages){
+    lines.push('');
+    lines.push(`Numbers: Robbers on inside: ${RF_STATE.robInside||'—'} | Robbers on outside: ${RF_STATE.robOutside||'—'} | Hostages: ${RF_STATE.hostages||'—'}`);
+  }
+  const demands=[...(RF_STATE.demands||[])];
+  if(RF_STATE.demandOther) demands.push(RF_STATE.demandOther);
+  if(demands.length){
+    lines.push('');
+    lines.push('Demands:');
+    demands.forEach(d=>lines.push(`- ${d}`));
+  }
+  if(RF_STATE.vehDesc||RF_STATE.vehColor||RF_STATE.vehPlate||RF_STATE.vehRegTo){
+    lines.push('');
+    lines.push('Vehicle Information:');
+    if(RF_STATE.vehDesc) lines.push(`- Description: ${RF_STATE.vehDesc}`);
+    if(RF_STATE.vehColor) lines.push(`- Color: ${RF_STATE.vehColor}`);
+    if(RF_STATE.vehPlate) lines.push(`- Plate: ${RF_STATE.vehPlate}`);
+    if(RF_STATE.vehRegTo) lines.push(`- Registered To: ${RF_STATE.vehRegTo}`);
+  }
+  const endingLine=RF_STATE.endingCustom?.trim()?RF_STATE.endingCustom.trim():(RF_STATE.ending||'');
+  if(endingLine||RF_STATE.caughtOnly){
+    lines.push('');
+    lines.push('How did the chase end?');
+    if(endingLine) lines.push(`- ${endingLine}`);
+    if(RF_STATE.caughtOnly) lines.push('- Check this once they have been caught only!');
+  }
+  if(RF_STATE.medNeeded||RF_STATE.medSus||RF_STATE.medCop||RF_STATE.hospital||RF_STATE.fleeHospital){
+    lines.push('');
+    lines.push('Medical Attention... - Was it needed?');
+    if(RF_STATE.medNeeded) lines.push('- Yes');
+    if(RF_STATE.medSus) lines.push(`- Suspects: ${RF_STATE.medSus}`);
+    if(RF_STATE.medCop) lines.push(`- Police: ${RF_STATE.medCop}`);
+    if(RF_STATE.hospital) lines.push(`Which hospital? ${RF_STATE.hospital}`);
+    if(RF_STATE.fleeHospital) lines.push('- Attempted to flee at hospital');
+  }
+  if(RF_STATE.processedAt||RF_STATE.pleadNC){
+    lines.push('');
+    lines.push('Processed at...');
+    if(RF_STATE.processedAt) lines.push(`- ${RF_STATE.processedAt}`);
+    if(RF_STATE.pleadNC) lines.push('- Plead no contest');
+  }
+  $q('#robReport').value=lines.join('
+');
+}`);
   if(RF_STATE.sceneCmd||RF_STATE.negotiator||RF_STATE.hostageBack){lines.push('');lines.push('Assignment:'); if(RF_STATE.sceneCmd) lines.push(`- Scene command: ${RF_STATE.sceneCmd}`); if(RF_STATE.negotiator) lines.push(`- Negotiator: ${RF_STATE.negotiator}`); if(RF_STATE.hostageBack) lines.push(`- Who stayed back for hostage: ${RF_STATE.hostageBack}`);} 
   const purs=[['Primary',RF_STATE.primary,RF_STATE.primaryPass],['Secondary',RF_STATE.secondary,RF_STATE.secondaryPass],['Tertiary',RF_STATE.tertiary,RF_STATE.tertiaryPass],['Parallel',RF_STATE.parallel,RF_STATE.parallelPass]]; const extras=[['Bike-Unit',RF_STATE.bike],['Air-1',RF_STATE.air1],['Co-Pilot',RF_STATE.air1Copilot]]; if(purs.some(x=>x[1]||x[2])||extras.some(x=>x[1])){lines.push('');lines.push('Pursuit Order:'); purs.forEach(([l,u,p])=>{ if(u||p) lines.push(`${l}: ${u||'—'}${p?`  |  Passenger: ${p}`:''}`);}); if(RF_STATE.bike) lines.push(`Bike-Unit (Optional): ${RF_STATE.bike}`); if(RF_STATE.air1) lines.push(`Air-1 (Optional): ${RF_STATE.air1}`); if(RF_STATE.air1Copilot) lines.push(`Co-Pilot (Optional): ${RF_STATE.air1Copilot}`);} 
   if(RF_STATE.robType){lines.push('');lines.push(`Robbery Type: ${RF_STATE.robType}`); if(RF_STATE.robType==='Fleeca Bank' && RF_STATE.whichFleeca) lines.push(`Which Fleeca: ${RF_STATE.whichFleeca}`); if(RF_STATE.robType==='24/7 Store' && RF_STATE.which247) lines.push(`Which 24/7: ${RF_STATE.which247}`);} 
@@ -320,16 +398,22 @@ function buildRF(){const lines=[]; if(RF_STATE.officer) lines.push(`Your Callsig
   const endingLine=RF_STATE.endingCustom?.trim()?RF_STATE.endingCustom.trim():(RF_STATE.ending||''); if(endingLine||RF_STATE.caughtOnly){lines.push('');lines.push('How did the chase end?'); if(endingLine) lines.push(`- ${endingLine}`); if(RF_STATE.caughtOnly) lines.push('- Check this once they have been caught only!');}
   if(RF_STATE.medNeeded||RF_STATE.medSus||RF_STATE.medCop||RF_STATE.hospital||RF_STATE.fleeHospital){lines.push('');lines.push('Medical Attention... - Was it needed?'); if(RF_STATE.medNeeded) lines.push('- Yes'); if(RF_STATE.medSus) lines.push(`- Suspects: ${RF_STATE.medSus}`); if(RF_STATE.medCop) lines.push(`- Police: ${RF_STATE.medCop}`); if(RF_STATE.hospital) lines.push(`Which hospital? ${RF_STATE.hospital}`); if(RF_STATE.fleeHospital) lines.push('- Attempted to flee at hospital');}
   if(RF_STATE.processedAt||RF_STATE.pleadNC){lines.push('');lines.push('Processed at...'); if(RF_STATE.processedAt) lines.push(`- ${RF_STATE.processedAt}`); if(RF_STATE.pleadNC) lines.push('- Plead no contest');}
-  $q('#robReport').value=lines.join('\n');
+  $q('#robReport').value=lines.join('
+');
 }
 
 function initRobberyTab(){ // populate officer dropdowns and endings
   const s1=document.getElementById('officerSelect'); const s2=document.getElementById('robOfficerSel');
   function populate(sel){ if(sel.options.length===1){ OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=o.cs; opt.textContent=`${o.cs} — ${o.name}`; sel.appendChild(opt);});} }
+  function populateNames(sel){ if(sel && sel.options.length===1){ OFFICERS.forEach(o=>{const opt=document.createElement('option'); opt.value=`${o.name} — ${o.cs}`; opt.textContent=`${o.name} — ${o.cs}`; sel.appendChild(opt);});} }
   populate(s1); populate(s2);
   // link selects
   fillOfficerSelect('#officerSelect','#officer');
   fillOfficerSelect('#robOfficerSel','#robOfficer');
+  // populate scene/negotiator/hostage dropdowns with names
+  populateNames(document.getElementById('sceneCmd'));
+  populateNames(document.getElementById('negotiator'));
+  populateNames(document.getElementById('hostageBack'));
   // endings
   const e=$q('#ending'); ENDINGS.forEach(x=>{const opt=document.createElement('option'); opt.textContent=x; e.appendChild(opt);}); if(RF_STATE.ending) e.value=RF_STATE.ending; e.onchange=()=>{RF_STATE.ending=e.value; persistRF(); buildRF();};
   // robbery type
